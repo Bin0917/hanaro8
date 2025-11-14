@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Timer</title>
+  </head>
+  <body>
+    <div id="timer">0:00.000</div>
+    <button id="btn">START</button>
+    <script>
+      let msec = 0;
+      const $btn = document.getElementById("btn");
+      const $timer = document.getElementById("timer");
+      $btn.addEventListener("click", function () {
+        console.log(this.innerHTML);
+        if (this.innerText == "START") {
+          this.innerText = "STOP";
+        } else {
+          this.innerText = "START";
+        }
+        setInterval(() => {
+          $timer.innerHTML = ++msec;
+        }, 1);
+      });
+    </script>
+  </body>
+</html>
