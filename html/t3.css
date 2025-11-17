@@ -1,0 +1,25 @@
+.container {
+  border: 1px solid #ccc;
+  width: 250px;
+  background-color: white;
+  display: flex;
+  gap: 1rem; /*두개의 자식블록사이를 띄울 수 잇음*/
+  border-radius: 0.7rem;
+  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+}
+body {
+  height: 100vh;
+  background-color: yellow;
+  display: grid; /* 중앙 맞추기 grid의 pic*/
+  place-items: center;
+}
+
+small {
+  display: block;
+  color: #999;
+}
+.border {
+  border: 1px solid black;
+}

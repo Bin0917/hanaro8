@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en"> <!--영어로 되어있으나 기본 pc os를 따라감-->
+<head>
+    <meta charset="UTF-8"> <!--검색엔진, 브라우저를 위한 코드 : meta-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--initial scale이 2면 10px 먹엿을때 20px로 머깋ㅁ-->
+    <title>first html</title>
+    <style>
+        h1 {
+            font-size:1.5em;
+        }
+        h3 {
+            font-size:1.2rem;
+        }
+
+        main, article, aside {
+            border: 1px solid #333;
+        }
+
+        main section {
+            border: 1px dotted red;
+        }
+        .container{
+            background-color: skyblue;
+            width: 100px;
+
+        }
+
+        ul li:first-child {
+            font-weight: 700;
+        }
+
+        ol li:nth-child(odd):not(.x) { /*odd : 홀수, even : 짝수*/
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Title</h1>
+        <nav>Nav</nav>
+    </header>
+
+    <main style="display:flex; align-items: center; justify-content: center;"> <!--flex : 자식태그를 인라인요소로 바꾸기-->
+        <div class="container">
+            <section aria-label="section1" onclick="console.log('hihihi')" aria-hidden="true">
+                <h3>Section</h3>
+                <ul>
+                    <li>1</li>
+                    <li><a href="#" onclick="" role="button">22</a></li>
+                    <li>333</li>
+                </ul>
+            </section>
+            <article draggable="true">
+                <h3>Article</h3>
+                <ol>
+                    <li>1</li>
+                    <li>2</li>
+                    <li class="x">3</li>
+                    <li>4</li>
+                    <li>5</li>
+                </ol>
+            </article>
+        </div>
+
+        <!-- <aside style="width: 200px; text-align: center;">Aside</aside> -->
+        <aside style="width: 200px; height: 200px; display: flex; justify-content: center; align-items: end;">Aside</aside>
+    </main>
+
+    <footer style="text-align: center;">&#169; Hanaro 2025</footer> <!--footter의 카피라이트 이모지-->
+</body>
+</html>

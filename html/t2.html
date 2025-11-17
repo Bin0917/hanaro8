@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!--영어로 되어있으나 기본 pc os를 따라감-->
+  <head>
+    <meta charset="UTF-8" />
+    <!--검색엔진, 브라우저를 위한 코드 : meta-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--initial scale이 2면 10px 먹엿을때 20px로 머깋ㅁ-->
+    <title>second html</title>
+    <style>
+      header,
+      nav {
+        border: 2px solid green;
+        padding: 10px;
+        margin-bottom: 5px;
+      }
+      main {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .container {
+        border: 2px dotted black;
+        background-color: yellow;
+        padding: 30px;
+      }
+      aside {
+        border: 2px dotted green;
+        width: 50px;
+        height: 350px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .x {
+        width: 120px;
+        height: 190.7px;
+      }
+      footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: 2px dotted green;
+        padding: 10px;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>header</header>
+    <nav>nav</nav>
+    <main style="border: 1px solid red; padding: 5px">
+      <div class="container">
+        <h1>main > container</h1>
+        <section>section</section>
+        <article>
+          <h3>article - title</h3>
+          <figure>
+            <img src="https://avatar.vercel.sh/s" alt="S" class="x" />
+            <img
+              src="https://unsplash.com/photos/b51xWeb75R4/download?ixid=M3wxMjA3fDB8MXxhbGx8M3x8fHx8fHx8MTc2MTg3OTc1M3w&force=true"
+              alt="lion"
+              width="150"
+              style="border: 2px dotted red"
+            />
+          </figure>
+        </article>
+      </div>
+      <aside style="align-items: center">aside</aside>
+    </main>
+    <footer class="text-center"><b>&#169; 시니어코딩</b></footer>
+  </body>
+</html>
