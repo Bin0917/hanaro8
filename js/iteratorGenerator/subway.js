@@ -60,25 +60,23 @@ class Subway {
     this.#end = end;
   }
 
-  //시작, 끝 인덱스 정하기
   *[Symbol.iterator]() {
+    //시작, 끝 인덱스 정하기
     let startIdx = LINE2.indexOf(this.#start);
     let endIdx = LINE2.indexOf(this.#end);
 
     while (startIdx !== endIdx) {
       // 배열 길이 초과시 첫번째로 턴백
-      if (startIdx >= LINE2.length) {
-        startIdx = 0;
-      }
+      if (startIdx >= LINE2.length) startIdx = 0;
 
-      yield LINE2[startIdx++]; // 시작인덱스 넣고 증가
+      yield LINE2[startIdx++]; // 시작인덱스 넣고 증가하면서 값 던지기
     }
     yield LINE2[endIdx]; // 마지막값 전달
   }
 }
 
-const routes = new Subway("문래", "신림");
-console.log([...routes]);
+const routes = new Subway("문래", "신림"); // iterator 프로토콜로 인해 ... 쓰면 자동으로 next 호출함 ㅇ
+console.log([...routes]); //밖에서 yield로 보낸 값 저장. 내부에선 저장되지 않음 ㅇㅇ
 assert.deepStrictEqual(
   [...routes],
   ["문래", "대림", "구로디지털단지", "신대방", "신림"]
