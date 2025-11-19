@@ -7,22 +7,67 @@
   </head>
   <body>
     <div id="timer">0:00.000</div>
-    <button id="btn">START</button>
+    <button id="btnStart">START</button>
+    <button id="btnclear">CLEAR</button>
     <script>
-      let msec = 0;
-      const $btn = document.getElementById("btn");
+      const btnStart = document.getElementById("btnStart");
+      const $btnClear = document.getElementById("btnclear");
       const $timer = document.getElementById("timer");
-      $btn.addEventListener("click", function () {
-        console.log(this.innerHTML);
+      let isRunning = false;
+
+      function rendering() {
+        const now = Date.now();
+        $timer.innerText = formatTime(now - start - idle);
+        //const now = new Date().getTime();
+        const left = 10 - (Date.now() % 10);
+        if (isRunning) {
+          setTimeout(() => {
+            rendering();
+          }, left);
+        }
+      }
+
+      let start;
+      let stop;
+      let idle = 0;
+      btnStart.addEventListener("click", function () {
         if (this.innerText == "START") {
           this.innerText = "STOP";
+          isRunning = true;
+          if (start == undefined) {
+            start = stop = Date.now();
+          }
+          idle += Date.now() - stop;
+          rendering();
+          //$btnClear.disabled = true;
         } else {
           this.innerText = "START";
+          isRunning = false;
+          stop = Date.now();
+          //$btnClear.disabled = false; // 버튼 한번만 눌러서 중복 전송 방지
         }
-        setInterval(() => {
-          $timer.innerHTML = ++msec;
-        }, 1);
+        $btnClear.disabled = isRunning;
       });
+
+      $btnClear.addEventListener("click", function () {
+        $btnClear.disabled = false; // 버튼 한번만 눌러서 중복 전송 방지
+        start = undefined;
+        idle = 0;
+        $timer.innerText = "0:00.000";
+      });
+
+      function formatTime(millis) {
+        const m = Math.trunc(millis / 60000)
+          .toString()
+          .padStart(2, "0");
+        const s = Math.trunc((millis % 60000) / 1000)
+          .toString()
+          .padStart(2, "0");
+        const ms = Math.trunc(millis % 1000)
+          .toString()
+          .padStart(2, "0");
+        return `${m}:${s}.${ms}`;
+      }
     </script>
   </body>
 </html>

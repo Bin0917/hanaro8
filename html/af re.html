@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="timer">00:00.000</div>
+    <button id="button">start</button>
+
+    <script>
+      //버튼을 눌러야함
+      // 일단 dom 여녁ㄹ
+      const time = document.getElementById("timer");
+      const button = document.getElementById("button");
+      let isRunning = false;
+      function render() {
+        // 공식 : 현재 타이머의 시간! now - start - idle
+        const now = Date.now();
+        timer.innerHTML = formatTime(now - start - idle);
+        let left = 10 - (Date.now() % 10);
+        if (isRunning) {
+          setTimeout(() => {
+            render();
+          }, left);
+        }
+      }
+
+      let start;
+      let stop;
+      let idle;
+      button.addEventListener("click", function () {
+        if (button.innerHTML == "start") {
+          button.innerHTML = "stop";
+          if (start == undefined) {
+            // 첫 버튼 클릭시 start, stop 초기화
+            start = stop = Date.now();
+          }
+          // 리스타트시 현재 시간에서 이전에 저장된 stop 시간 빼줌
+          idle += Date.now() - stop;
+          isRunning = true;
+          render();
+        } else {
+          button.innerHTML = "start";
+          isRunning = false;
+          stop = Date.now();
+        }
+      });
+      //포맷팅 저 밀리세컨드 모르겟슴
+
+      function formatTime(whatTheTime) {
+        const m = Math.trunc(whatTheTime / 60000)
+          .toString()
+          .padStart(2, "0");
+        const s = Math.trunc((whatTheTime % 60000) / 1000)
+          .toString()
+          .padStart(2, "0");
+        const ms = Math.trunc(whatTheTime % 1000)
+          .toString()
+          .padStart(2, "0");
+        return `${m}:${s}.${ms}`;
+      }
+    </script>
+  </body>
+</html>
