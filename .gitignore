@@ -1,0 +1,8 @@
+.vscode
+node_modules
+.env*
+tmp
+dist
+mysql
+coverage
+backup
