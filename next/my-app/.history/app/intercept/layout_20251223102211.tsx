@@ -1,0 +1,16 @@
+import Link from 'next/link';
+import type { PropsWithChildren } from 'react';
+
+export default function InterceptLaytout({ children }: PropsWithChildren) {
+  return (
+    <>
+      <h1 className="text-center">Intercept layout</h1>
+      <div className="flex gap-3">
+        <Link href="/intercept/ic1">IC1</Link>
+        <Link href="/intercept/ic2">IC2</Link>
+        <Link href="/intercept/ic3">IC3</Link>
+      </div>
+      <div>{children}</div>
+    </>
+  );
+}
