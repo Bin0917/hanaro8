@@ -21,9 +21,10 @@ export default function HelloPage() {
   );
 }
 
+// searchParam은 쫌 이상하게 해야댐..
 function SearchParamId() {
   // 아래 얘를 suspense로 감싸야함 => 함수화해서 빼줌
-  // 꼬옥 searchParam만? 엉. 그 url 확인하거나 오고가는 값을 다루면 쓰는듯
+  // 꼬옥 searchParam만?
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams.toString());
   const pathname = usePathname();

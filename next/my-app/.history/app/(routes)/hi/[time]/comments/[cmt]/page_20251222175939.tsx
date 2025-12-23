@@ -1,0 +1,23 @@
+import { use } from 'react';
+
+type Props = {
+  params: Promise<{ time: string; cmt: string }>;
+};
+
+export const generateStaticParams = (time: string) => {
+  if (time === 'morning') {
+    return [{ cmt: 1 }, { cmt: 2 }, { cmt: 3 }];
+  } else if (time === 'afternoon') {
+    return [{ cmt: 4 }, { cmt: 5 }, { cmt: 6 }];
+  }
+  return [{ cmt: 7 }, { cmt: 8 }, { cmt: 9 }];
+};
+
+export default function Cmt({ params }: Props) {
+  const { time, cmt } = use(params);
+  return (
+    <h1>
+      Good {time} - {cmt} comments!
+    </h1>
+  );
+}

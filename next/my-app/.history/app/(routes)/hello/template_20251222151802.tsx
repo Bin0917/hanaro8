@@ -4,7 +4,7 @@ export default function HelloTemplate({ children }: PropsWithChildren) {
   return (
     <>
       <h1>hello Template</h1>
-      <Suspense fallback={'...'}>
+      <Suspense fallback>
         <div className="border p-5 text-center">{children}</div>
       </Suspense>
     </>

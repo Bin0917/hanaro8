@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { type PropsWithChildren, Suspense } from 'react';
+import type { PropsWithChildren } from 'react';
 
 export default function HelloLayout({ children }: PropsWithChildren) {
   return (
@@ -10,9 +10,7 @@ export default function HelloLayout({ children }: PropsWithChildren) {
         <Link href={'/hello'}>Hello</Link>
         <Link href={'/hello/morning'}>morning</Link>
       </div>
-      <Suspense fallback={'...'}>
-        <div className="border p-5 text-center">{children}</div>
-      </Suspense>
+      <div className="border p-5 text-center">{children}</div>
     </>
   );
 }

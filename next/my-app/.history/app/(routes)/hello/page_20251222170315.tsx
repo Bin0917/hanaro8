@@ -12,7 +12,6 @@ export default function HelloPage() {
       <h1>hello Page: {pathname} </h1>
       <div>
         <SayHello name={'빈'} />
-
         <Suspense fallback={<h1>오마이갓</h1>}>
           <SearchParamId />
         </Suspense>
@@ -21,10 +20,10 @@ export default function HelloPage() {
   );
 }
 
+// searchParam은 쫌 이상하게 해야댐..
 function SearchParamId() {
-  // 아래 얘를 suspense로 감싸야함 => 함수화해서 빼줌
-  // 꼬옥 searchParam만? 엉. 그 url 확인하거나 오고가는 값을 다루면 쓰는듯
   const searchParams = useSearchParams();
+  // 아래 얘를 suspense로 감싸야함 => 함수화해서 빼줌
   const params = new URLSearchParams(searchParams.toString());
   const pathname = usePathname();
 
@@ -37,6 +36,5 @@ function SearchParamId() {
     params.set('id', `200`); // 이걸로 바로 바뀌지않음. 서버와 통신 필수!! => 주소창이 바뀌기 + 새로고침까쥐
     router.push(`${pathname}?${params.toString()}`);
   };
-  // 당근빠다 jsx 리턴 필요
   return <button onClick={make200}>ID: {id}</button>;
 }
