@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { ModeToggle } from '@/components/ModeToggle';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Button } from '@/components/ui/button';
 import './globals.css';
 
 const geistSans = Geist({
@@ -27,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // 하이드레이션 워닝으 붙여줘야 서버/브라우저의 다크모드 토글러 오류 안남
+    // 하이드레이션 워닝으 붙여줘야 다크모드 토글러 오류 안남
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} mx-5 antialiased`}
@@ -39,17 +38,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {' '}
-          <nav className="flex items-center justify-between">
-            <div>
-              Navigator <Link href="/hello">hello</Link>|
-              <Link href="/hi">HI</Link>|<Link href="/shop/123">123</Link>|
-              <Link href="/shop/123/456">123456</Link>|
-              <Link href="/intercept">1ntercept</Link>|
-              <Link href="/photos">Photo</Link>|
-              <Link href="/caches">Caches</Link>{' '}
-              <Button variant={'apply'}>Sign in</Button>
-            </div>
-            <ModeToggle />
+          <nav className="flex gap-2">
+            Navigator <Link href="/hello">hello</Link>|
+            <Link href="/hi">HI</Link>|<Link href="/shop/123">123</Link>|
+            <Link href="/shop/123/456">123456</Link>|
+            <Link href="/intercept">1ntercept</Link>|
+            <Link href="/photos">Photo</Link>|<Link href="/caches">Caches</Link>{' '}
+            |<ModeToggle />
           </nav>
           <div className="border p-3">{children}</div>
           <footer className="text-center">footer</footer>

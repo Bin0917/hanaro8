@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { ModeToggle } from '@/components/ModeToggle';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Button } from '@/components/ui/button';
 import './globals.css';
 
 const geistSans = Geist({
@@ -27,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // 하이드레이션 워닝으 붙여줘야 서버/브라우저의 다크모드 토글러 오류 안남
+    // 하이드레이션 워닝으 붙여줘야 다크모드 토글러 오류 안남
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} mx-5 antialiased`}
@@ -47,7 +46,6 @@ export default function RootLayout({
               <Link href="/intercept">1ntercept</Link>|
               <Link href="/photos">Photo</Link>|
               <Link href="/caches">Caches</Link>{' '}
-              <Button variant={'apply'}>Sign in</Button>
             </div>
             <ModeToggle />
           </nav>

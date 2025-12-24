@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { ModeToggle } from '@/components/ModeToggle';
 import { ThemeProvider } from '@/components/theme-provider';
-import { Button } from '@/components/ui/button';
 import './globals.css';
 
 const geistSans = Geist({
@@ -47,7 +46,6 @@ export default function RootLayout({
               <Link href="/intercept">1ntercept</Link>|
               <Link href="/photos">Photo</Link>|
               <Link href="/caches">Caches</Link>{' '}
-              <Button variant={'apply'}>Sign in</Button>
             </div>
             <ModeToggle />
           </nav>

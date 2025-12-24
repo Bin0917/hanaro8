@@ -128,11 +128,4 @@
   a:hover {
     @apply underline underline-offset-2 text-teal-800
   }
-  button {
-    @apply cursor-pointer 
-  }
-  button:active {
-    @apply scale-90 duration-75
-  }
-
 }
