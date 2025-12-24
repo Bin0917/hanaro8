@@ -4,11 +4,9 @@ type Props = {
   params: Promise<{ slug: number[] | string[] }>;
 };
 
-export const generateStaticParams = () => [
-  {
-    slug: ['X'],
-  },
-];
+export const generateStaticParams = () => {
+  slug: [''];
+};
 
 // dynamic seg 에서 진화한 catch-all seg
 export default function Shop({ params }: Props) {

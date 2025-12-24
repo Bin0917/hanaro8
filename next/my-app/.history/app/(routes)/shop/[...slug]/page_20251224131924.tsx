@@ -6,7 +6,7 @@ type Props = {
 
 export const generateStaticParams = () => [
   {
-    slug: ['X'],
+    slug: [''],
   },
 ];
 

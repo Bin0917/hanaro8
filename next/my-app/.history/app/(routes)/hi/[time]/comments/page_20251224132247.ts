@@ -1,10 +1,8 @@
 import { use } from 'react';
 
-export const generateStaticParams = () => [
-  {
-    time: 'morning',
-  },
-];
+export const generateStaticParams = () => {
+  time: 'morning';
+};
 
 export default function Comments({
   params,

@@ -1,12 +1,11 @@
-'use cache';
-
 import Image from 'next/image';
 import Link from 'next/link';
+import { use } from 'react';
 import { blurDataURL } from '@/app/(routes)/hi/constants';
 import type { photoProps } from '../page';
 
-// //
-// export const dynamicParams = false;
+//
+export const dynamicParams = false;
 export const generateStaticParams = async () => {
   const photos: Awaited<photoProps[]> = await fetch(
     `https://picsum.photos/v2/list?limit=${10}`,
@@ -17,17 +16,16 @@ export const generateStaticParams = async () => {
   return photos.map(({ id }) => ({ id }));
 };
 
-export default async function PhotoPage({
+export default function PhotoPage({
   params, // 얘는 params로 고정!! 이름 바꾸면 next가 인식을 몬함
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  // if (id > 10) notFound();
+  const { id } = use(params);
   const data = fetch(`https://picsum.photos/id/${id}/info`).then((res) =>
     res.json(),
   );
-  const photo: photoProps = await data;
+  const photo: photoProps = use(data);
   return (
     <>
       <h1>{photo.author}</h1>

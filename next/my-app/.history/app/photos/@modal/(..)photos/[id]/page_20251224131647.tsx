@@ -1,5 +1,6 @@
 'use cache';
 import Image from 'next/image';
+import { use } from 'react';
 import { blurDataURL } from '@/app/(routes)/hi/constants';
 import Modal from '@/components/Modal';
 import type { photoProps } from '../../../page';
@@ -25,11 +26,11 @@ export default async function PhotoPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
+  const { id } = use(params);
   const data = fetch(`https://picsum.photos/id/${id}/info`).then((res) =>
     res.json(),
   );
-  const photo: photoProps = await data;
+  const photo: photoProps = use(data);
   return (
     <Modal>
       <Image

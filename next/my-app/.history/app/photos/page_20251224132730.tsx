@@ -20,7 +20,7 @@ const getFetch = (n: number = 20): Promise<photoProps[]> =>
   fetch(`https://picsum.photos/v2/list?limit=${n}`).then((res) => res.json());
 
 export default async function Photos() {
-  cacheLife('days'); // revalidate 대체품!! 함수 내부에 작성해줌
+  cacheLife('minutes');
 
   //   const data = fetch('https://picsum.photos/v2/list?limit=9').then((res) =>
   //     res.json(),

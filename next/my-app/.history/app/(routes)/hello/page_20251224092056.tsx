@@ -12,9 +12,7 @@ export default function HelloPage() {
     <>
       <h1>hello Page: {pathname} </h1>
       <div>
-        <Suspense>
-          <SayHello name={'빈'} />
-        </Suspense>
+        <SayHello name={'빈'} />
 
         <Suspense fallback={<h1>오마이갓</h1>}>
           <SearchParamId />

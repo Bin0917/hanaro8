@@ -3,9 +3,7 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
-  cacheComponents: true,
   // 타입의 주소랑 뭐 이것저것 자동 캐칭(갈 수 있는, 쓸 수 있는것만 띄워줌)
-  // 이것도 과제때 보신다고 함. 아래것들 잘 적을 것
   experimental: {
     typedEnv: true,
   },

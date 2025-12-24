@@ -2,6 +2,7 @@
 import { cacheLife } from 'next/cache';
 import Image from 'next/image';
 import Link from 'next/link';
+import { use } from 'react';
 
 export type photoProps = {
   id: string;
@@ -18,14 +19,13 @@ export type photoProps = {
 // 중복되는로직 함수로 빼기!!!
 const getFetch = (n: number = 20): Promise<photoProps[]> =>
   fetch(`https://picsum.photos/v2/list?limit=${n}`).then((res) => res.json());
-
 export default async function Photos() {
-  cacheLife('days'); // revalidate 대체품!! 함수 내부에 작성해줌
+  cacheLife('minutes');
 
   //   const data = fetch('https://picsum.photos/v2/list?limit=9').then((res) =>
   //     res.json(),
   //   );
-  const photos = await getFetch();
+  const photos = use(getFetch());
   return (
     <div className="flex flex-wrap justify-center gap-3">
       {photos.map((photo: photoProps) => {
