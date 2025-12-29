@@ -30,8 +30,8 @@ const FOLDERS: Folder[] = [
 
 export default function PostEdit() {
   const [isOpen, toggleOpen] = useReducer((p) => !p, false); //드롭다운 오픈 상태 관리
-  const [folder, setFolder] = useState<Folder>(FOLDERS[0]); // 드롭다운시 폴더 데이터 저장
-  const [post, setPost] = useState<Partial<Post>>(); //
+  const [folder, setFolder] = useState<Folder>(FOLDERS[0]); // 드롭다운 폴더 번호 체킹
+  const [post, setPost] = useState<Partial<Post>>();
   // const [localPrivate, togglePrivate] = useReducer((p) => !p, false);
   const [isShowButtons, setShowButtons] = useState(false);
 

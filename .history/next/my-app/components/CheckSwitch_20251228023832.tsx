@@ -58,13 +58,14 @@ export default function CheckSwitch({
         checked={isCheck}
         onClick={() => {
           toggleCheck();
+          // 부모에서 새로운 소식을 즉시 정한다?
           if (setCheckedAction) setCheckedAction(!isCheck);
         }}
         // 배열에 담긴거 돌면서 variant 적용
         className={cn(css.map((cs) => `data-[state=checked]:${cs}`))}
       />
       {label} - {isCheck ? "checked" : "unchecked"}
-      {/* hidden 인풋에 백엔드로 전달해야 할 값들을 얹어 보내버림!, name은 꼭 존재해야 데이터를 보냄 */}
+      {/* hidden 인풋에 백엔드로 전달해야 할 값들을 얹어 보내버림! */}
       {!!name && (
         <Input type="hidden" name={name} defaultValue={isCheck ? "on" : ""} />
       )}

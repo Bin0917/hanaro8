@@ -1,41 +1,41 @@
-"use client";
+'use client';
 
-import { useId, useReducer } from "react";
-import { cn } from "@/lib/utils";
-import { Checkbox } from "./ui/checkbox";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Switch } from "./ui/switch";
+import { useId, useReducer } from 'react';
+import { cn } from '@/lib/utils';
+import { Checkbox } from './ui/checkbox';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Switch } from './ui/switch';
 
 type CsProp = {
-  type?: "check" | "switch";
+  type?: 'check' | 'switch';
   name?: string;
   label?: string;
   checked?: boolean;
   setCheckedAction?: (checked: boolean) => void;
-  variant?: "default" | "muted" | "destructive" | "secondary";
+  variant?: 'default' | 'muted' | 'destructive' | 'secondary';
 };
 
 // variant 세팅을 위한 틀 생성
-const setClassnames = (variant: CsProp["variant"] | "primary") => [
+const setClassnames = (variant: CsProp['variant'] | 'primary') => [
   `border-${variant}`,
   `bg-${variant}`,
   `text-${variant}-foreground`,
 ];
 // 입력받은 variant와 setClassnames 맵핑
 const CheckVarint = {
-  default: setClassnames("primary"),
-  destructive: setClassnames("destructive"),
-  secondary: setClassnames("secondary"),
-  muted: setClassnames("muted"),
+  default: setClassnames('primary'),
+  destructive: setClassnames('destructive'),
+  secondary: setClassnames('secondary'),
+  muted: setClassnames('muted'),
 };
 
 export default function CheckSwitch({
   name,
   label,
-  type = "check",
+  type = 'check',
   checked = false,
-  variant = "default",
+  variant = 'default',
   setCheckedAction,
 }: CsProp) {
   //뭐 값을 넘겨주기 애매한데 id로 엮어야한다? => useId 사용!
@@ -47,14 +47,12 @@ export default function CheckSwitch({
 
   console.log(css);
 
-  const Comp = type === "switch" ? Switch : Checkbox;
+  const Comp = type === 'switch' ? Switch : Checkbox;
 
   return (
-    // id로 묶어서 글자만 눌러도 클릭 됨
     <Label htmlFor={checkId} className="cursor-pointer">
       <Comp
         id={checkId}
-        // checked : 처음 켜져있는지 마는지..? 도 결정-!
         checked={isCheck}
         onClick={() => {
           toggleCheck();
@@ -63,10 +61,10 @@ export default function CheckSwitch({
         // 배열에 담긴거 돌면서 variant 적용
         className={cn(css.map((cs) => `data-[state=checked]:${cs}`))}
       />
-      {label} - {isCheck ? "checked" : "unchecked"}
-      {/* hidden 인풋에 백엔드로 전달해야 할 값들을 얹어 보내버림!, name은 꼭 존재해야 데이터를 보냄 */}
+      {label} - {isCheck ? 'checked' : 'unchecked'}
+      {/* hidden 인풋에 백엔드로 전달해야 할 값들을 얹어 보내버림! */}
       {!!name && (
-        <Input type="hidden" name={name} defaultValue={isCheck ? "on" : ""} />
+        <Input type="hidden" name={name} defaultValue={isCheck ? 'on' : ''} />
       )}
     </Label>
   );

@@ -1,0 +1,4 @@
+
+### book list
+
+GET http://localhost:3000/api/books

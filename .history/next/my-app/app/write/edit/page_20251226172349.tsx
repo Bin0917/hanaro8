@@ -1,8 +1,8 @@
-"use client";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
-import { useActionState, useReducer, useState } from "react";
-import CheckSwitch from "@/components/CheckSwitch";
-import { Button } from "@/components/ui/button";
+'use client';
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { useActionState, useReducer, useState } from 'react';
+import CheckSwitch from '@/components/CheckSwitch';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,50 +10,43 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { type Post, type PostError, savePosts } from "./posts.action";
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { type Post, type PostError, savePosts } from './posts.action';
 
 type Folder = {
   id: number;
   name: string;
-  type?: "text" | "file";
+  type?: 'text' | 'file';
 };
 
-// db 대용
 const FOLDERS: Folder[] = [
-  { id: 1, name: "공지사항" },
-  { id: 2, name: "자유게시판" },
-  { id: 3, name: "앨범", type: "file" },
+  { id: 1, name: '공지사항' },
+  { id: 2, name: '자유게시판' },
+  { id: 3, name: '앨범', type: 'file' },
 ];
 
 export default function PostEdit() {
-  const [isOpen, toggleOpen] = useReducer((p) => !p, false); //드롭다운 오픈 상태 관리
-  const [folder, setFolder] = useState<Folder>(FOLDERS[0]); // 드롭다운시 폴더 데이터 저장
-  const [post, setPost] = useState<Partial<Post>>(); //
+  const [isOpen, toggleOpen] = useReducer((p) => !p, false);
+  const [folder, setFolder] = useState<Folder>(FOLDERS[0]);
+  const [post, setPost] = useState<Partial<Post>>();
   // const [localPrivate, togglePrivate] = useReducer((p) => !p, false);
   const [isShowButtons, setShowButtons] = useState(false);
 
-  // useActionState = 폼 데이터 다루기. 매개변수로 formData를 항상 받음
   const [postError, save, isPending] = useActionState(
-    // reducer. formAction에 넣어줌. -> Promise를 받아다 풀어야함 -> async 함수
     async (_: PostError | undefined, formData: FormData) => {
       // formData.set('isprivate', localPrivate ? 'on' : '');
       // console.log('formdata>>', formData.get('isprivate'));
-
-      // 디스트럭처링 중요! 리턴 위치도 잘 맞추기
       const [err, data] = await savePosts(formData);
       if (err) {
-        // 에러여도 출력은 해야함. => post에 담음
         setPost(err.data);
         return err;
       }
       setPost(data);
       // console.log('savedData >>>', data);
     },
-    // postError의 default 값
-    undefined
+    undefined,
   );
 
   // const save = async (formData: FormData) => {
@@ -69,9 +62,8 @@ export default function PostEdit() {
         <div className="flex gap-2">
           <DropdownMenu onOpenChange={toggleOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant={"outline"}>
+              <Button variant={'outline'}>
                 {folder.name}
-                {/* useReducer로 열림 유무 저장. 해당 플래그로 아이콘 상태 핸들링 */}
                 {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </Button>
             </DropdownMenuTrigger>
@@ -138,10 +130,9 @@ export default function PostEdit() {
             checked={post?.ispublic}
             setCheckedAction={setShowButtons}
             variant="muted"
-            type="switch"
           />
         </div>
-        {folder.type === "file" ? (
+        {folder.type === 'file' ? (
           <Input
             type="file"
             name="filex"
@@ -159,14 +150,14 @@ export default function PostEdit() {
 
         <div className="flex justify-around text-white">
           {/* 버튼 타입 잘 주기 */}
-          <Button type="reset" variant={"secondary"}>
+          <Button type="reset" variant={'secondary'}>
             취소
           </Button>
-          <Button type="button" variant={"destructive"}>
+          <Button type="button" variant={'destructive'}>
             삭제
           </Button>
-          <Button type="submit" variant={"apply"} disabled={isPending}>
-            저장{isPending && "..."}
+          <Button type="submit" variant={'apply'} disabled={isPending}>
+            저장{isPending && '...'}
           </Button>
         </div>
       </form>

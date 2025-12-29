@@ -1,0 +1,16 @@
+# @ = 변수 설정시 사용
+@api = http://localhost:3000/api
+### book list
+
+GET {{api}}/books
+
+### add book
+POST {{api}}/books
+
+{
+    "title":"New book",
+    "writer" : "bean"
+}
+
+### get a book
+GET {{api}}/books/22

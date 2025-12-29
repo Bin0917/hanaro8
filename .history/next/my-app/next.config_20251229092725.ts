@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // basePath: "/post",
+  basePath: "/post",
   /* config options here */
   reactCompiler: true,
   cacheComponents: true,

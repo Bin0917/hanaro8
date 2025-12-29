@@ -21,7 +21,6 @@ type Folder = {
   type?: "text" | "file";
 };
 
-// db 대용
 const FOLDERS: Folder[] = [
   { id: 1, name: "공지사항" },
   { id: 2, name: "자유게시판" },
@@ -29,15 +28,13 @@ const FOLDERS: Folder[] = [
 ];
 
 export default function PostEdit() {
-  const [isOpen, toggleOpen] = useReducer((p) => !p, false); //드롭다운 오픈 상태 관리
-  const [folder, setFolder] = useState<Folder>(FOLDERS[0]); // 드롭다운시 폴더 데이터 저장
-  const [post, setPost] = useState<Partial<Post>>(); //
+  const [isOpen, toggleOpen] = useReducer((p) => !p, false);
+  const [folder, setFolder] = useState<Folder>(FOLDERS[0]);
+  const [post, setPost] = useState<Partial<Post>>();
   // const [localPrivate, togglePrivate] = useReducer((p) => !p, false);
   const [isShowButtons, setShowButtons] = useState(false);
 
-  // useActionState = 폼 데이터 다루기. 매개변수로 formData를 항상 받음
   const [postError, save, isPending] = useActionState(
-    // reducer. formAction에 넣어줌. -> Promise를 받아다 풀어야함 -> async 함수
     async (_: PostError | undefined, formData: FormData) => {
       // formData.set('isprivate', localPrivate ? 'on' : '');
       // console.log('formdata>>', formData.get('isprivate'));
@@ -71,7 +68,6 @@ export default function PostEdit() {
             <DropdownMenuTrigger asChild>
               <Button variant={"outline"}>
                 {folder.name}
-                {/* useReducer로 열림 유무 저장. 해당 플래그로 아이콘 상태 핸들링 */}
                 {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </Button>
             </DropdownMenuTrigger>
