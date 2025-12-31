@@ -1,10 +1,8 @@
 'use server'; // 이 파일의 모든 함수는 서버에서만 실행됨을 선언!
 
-import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
-import z, { email, treeifyError } from 'zod';
+import z, { treeifyError } from 'zod';
 import { signIn, signOut } from './auth';
-import { isErrorWithMessage } from './errors';
 import { prisma } from './prisma';
 
 // 1. 사용할 로그인 방식(제공자) 타입 정의
@@ -103,39 +101,33 @@ export const loginEmail = async (formdata: FormData) => {
 };
 
 export const regist = async (_: ValidError | undefined, formData: FormData) => {
-  try {
-    const zobj = z
-      .object({
-        name: z.string().min(1).max(30),
-        email: z.email(),
-        password: z.string().min(3),
-        password2: z.string().min(3),
-      })
-      .refine(
-        ({ password, password2 }) => password === password2,
-        'Not equals pw, pw2',
-      );
+  const zobj = z
+    .object({
+      name: z.string().min(1).max(30),
+      email: z.email(),
+      password: z.string().min(3),
+      password2: z.string().min(3),
+    })
+    .refine(
+      ({ password, password2 }) => password === password2,
+      'Not equals pw, pw2',
+    );
 
-    const [err, data] = validate(zobj, formData);
-    if (err) return [err];
+  const [err, data] = validate(zobj, formData);
+  if (err) return [err];
 
-    const { email } = data;
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
+  const { email } = data;
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    if (user)
-      return [
-        { error: { email: 'this email is already exist' }, data },
-      ] satisfies [ValidError];
+  if (user)
+    return [
+      { error: { email: 'this email is already exist' }, data },
+    ] satisfies [ValidError];
 
-    await prisma.user.create({
-      data,
-      select: { id: true, name: true, email: true, isadmin: true },
-    });
-
-    redirect('/sign');
-  } catch (err) {
-    return [{error: {email: isErrorWithMessage(err) ? JSON.stringify(err)},data}]
-  }
+  const newUser = await prisma.user.create({
+    data,
+    select: { id: true, name: true, email: true, isadmin: true },
+  });
 };

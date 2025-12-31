@@ -3,7 +3,6 @@ import { Separator } from '@/components/ui/separator';
 import { loginGithub, loginGoogle } from '@/lib/sign.action';
 import { GithubLoginButton } from './GithubLoginButton';
 import { GoogleLoginButton } from './GoogleLoginButton';
-import RegistForm from './RegistForm';
 import SignForm from './SignForm';
 
 // type Provider = 'google' | 'github';
@@ -29,14 +28,14 @@ export default function SignPage({
           value={callbackUrl || '/hello'}
         />
         <div className="grid grid-cols-2 place-items-center gap-5">
-          <GoogleLoginButton formAction={loginGoogle} isRegist={isRegist} />
+          <GoogleLoginButton formAction={loginGoogle} />
           <GithubLoginButton formAction={loginGithub} />
         </div>
       </form>
 
       <Separator className="my-3" />
 
-      {isRegist ? <RegistForm /> : <SignForm />}
+      <SignForm />
     </div>
   );
 }

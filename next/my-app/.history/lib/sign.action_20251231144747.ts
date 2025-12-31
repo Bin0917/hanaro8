@@ -1,6 +1,5 @@
 'use server'; // 이 파일의 모든 함수는 서버에서만 실행됨을 선언!
 
-import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
 import z, { email, treeifyError } from 'zod';
 import { signIn, signOut } from './auth';
@@ -129,12 +128,11 @@ export const regist = async (_: ValidError | undefined, formData: FormData) => {
         { error: { email: 'this email is already exist' }, data },
       ] satisfies [ValidError];
 
-    await prisma.user.create({
+    const newUser = await prisma.user.create({
       data,
       select: { id: true, name: true, email: true, isadmin: true },
     });
-
-    redirect('/sign');
+    return [undefined, newUser];
   } catch (err) {
     return [{error: {email: isErrorWithMessage(err) ? JSON.stringify(err)},data}]
   }

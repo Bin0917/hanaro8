@@ -1,11 +1,8 @@
 'use server'; // 이 파일의 모든 함수는 서버에서만 실행됨을 선언!
 
-import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
-import z, { email, treeifyError } from 'zod';
+import z from 'zod';
 import { signIn, signOut } from './auth';
-import { isErrorWithMessage } from './errors';
-import { prisma } from './prisma';
 
 // 1. 사용할 로그인 방식(제공자) 타입 정의
 type Provider = 'google' | 'github' | 'credentials';
@@ -35,50 +32,48 @@ export const loginGithub = async (formdata: FormData) => {
  * 4. [에러/데이터 응답 타입]
  * 성공하면 [undefined, data], 실패하면 [error객체]를 반환하는 튜플 구조
  */
-export type ValidError = {
-  error: Record<string, string | undefined>;
-  data: Record<string, string | undefined>; // 사용자가 입력했던 값을 다시 돌려줌 (Input 유지용)
+export type ValidError<T> = {
+  error: { [k in keyof T]?: string }; // 어떤 필드에서 에러가 났는지 담음
+  data: T; // 사용자가 입력했던 값을 다시 돌려줌 (Input 유지용)
 };
 
-const validate = <T extends z.ZodObject>(zobj: T, formdata: FormData) => {
-  const data = Object.fromEntries(formdata.entries()) as ValidError['data'];
-
-  const validator = zobj.safeParse(formdata);
-  if (!validator.success) {
-    const verr = treeifyError(validator.error).properties || {};
-    const validError: ValidError = { error: {}, data };
-    for (const [k, v] of Object.entries(verr)) {
-      validError.error[k] = v?.errors[0];
-    }
-    return [validError] as const;
-  }
-  return [undefined, validator.data] as const;
-};
+export type EmailPasswd = { email: string; password: string };
 
 /**
  * 5. [이메일 로그인 서버 액션] ⭐ 핵심 로직! (서버액션)
  */
-export const loginEmail = async (formdata: FormData) => {
+export const loginEmail = async (
+  formdata: FormData,
+): Promise<[ValidError<EmailPasswd>] | [undefined, EmailPasswd]> => {
   // 브라우저에서 보낸 FormData에서 값 추출
   // const email = formdata.get('email') as string;
   // const password = formdata.get('password') as string;
   // const data = { email, password };
 
-  const zobj = z.object({
+  const zodj = z.object({
     email: z.email('Invalid Email Address'),
     password: z.string().min(3, 'enter more characters than 3'),
   });
-  const [err, data] = validate(zobj, formdata);
-  if (err) {
-    return [err];
+  const { email, password } = Object.fromEntries(formdata.entries());
+  const data = { email, password };
+  const validator = zodj.safeParse(obj);
+  if (!validator.success) {
+    console.log(z.treeifyError(validator.error));
+    const verr = z.treeifyError(validator.error).properties;
+    const validError = { error: {}, data };
+    for (const [k, v] of Object.entries(verr || [])) {
+    }
+  } else {
+    const data = validator.data;
   }
-  data;
-
   try {
+    // [검증] 이메일이 비어있으면 즉시 에러 반환 (서버단 유효성 검사)
+    // if (!email) return [{ error: { email: 'input the email' }, data }];
+    // if (!password) return [{ error: { password: 'input the password' }, data }];
+
     // [인증 시도] Auth.js의 signIn 실행
     // redirect: false를 주면 페이지 이동을 막고 여기서 결과를 기다림
-    const ret = await signIn('credentials', { redirect: false, ...data });
-    console.log('🚀 ~ loginEmail ~ ret:', ret);
+    await signIn('credentials', { redirect: false, email, password });
 
     return [undefined, data]; // 성공 시 에러는 없고 데이터만 반환
   } catch (err) {
@@ -99,43 +94,5 @@ export const loginEmail = async (formdata: FormData) => {
     // 예상치 못한 에러가 났을 때의 방어 코드
     console.log('🚀 인증 에러 발생:', err);
     return [{ error: { email: '로그인 정보가 일치하지 않습니다.' }, data }];
-  }
-};
-
-export const regist = async (_: ValidError | undefined, formData: FormData) => {
-  try {
-    const zobj = z
-      .object({
-        name: z.string().min(1).max(30),
-        email: z.email(),
-        password: z.string().min(3),
-        password2: z.string().min(3),
-      })
-      .refine(
-        ({ password, password2 }) => password === password2,
-        'Not equals pw, pw2',
-      );
-
-    const [err, data] = validate(zobj, formData);
-    if (err) return [err];
-
-    const { email } = data;
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (user)
-      return [
-        { error: { email: 'this email is already exist' }, data },
-      ] satisfies [ValidError];
-
-    await prisma.user.create({
-      data,
-      select: { id: true, name: true, email: true, isadmin: true },
-    });
-
-    redirect('/sign');
-  } catch (err) {
-    return [{error: {email: isErrorWithMessage(err) ? JSON.stringify(err)},data}]
   }
 };

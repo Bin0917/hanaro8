@@ -2,7 +2,6 @@ import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import 'dotenv/config';
 import { PrismaClient } from './generated/prisma/client';
 
-// 포트도 잘 맞춰줘야함
 const adapter = new PrismaMariaDb({
   host: process.env.DATABASE_HOST,
   port: Number(process.env.DATABASE_PORT),
