@@ -81,8 +81,8 @@ export default function LoginForm() {
           </Button>
         </form>
 
-        <form action="">
-          <GithubLoginButton formAction={githubLogin} />
+        <form>
+          <GithubLoginButton disabled={isPending} formAction={githubLogin} />
         </form>
       </CardContent>
     </Card>

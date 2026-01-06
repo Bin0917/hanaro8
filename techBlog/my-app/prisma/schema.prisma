@@ -23,17 +23,22 @@ model Account {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement()) @db.UnsignedInt
-  post_id   Int      @db.UnsignedInt
-  writer_id Int      @db.UnsignedInt
-  content   String   @db.Text
-  createdAt DateTime @default(now()) @db.Timestamp(0)
-  parentId  Int?     @db.UnsignedInt
-  Post      Post     @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Comment_Post")
-  User      User     @relation(fields: [writer_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Comment_User")
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  post_id   Int       @db.UnsignedInt
+  writer_id Int       @db.UnsignedInt
+  content   String    @db.Text
+  createdAt DateTime  @default(now()) @db.Timestamp(0)
+  parentId  Int?      @db.UnsignedInt
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  Post      Post      @relation(fields: [post_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Comment_Post")
+  User      User      @relation(fields: [writer_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Comment_User")
+  deletedAt DateTime? @db.Timestamp(0) // 추가
+
 
   @@index([post_id], map: "fk_Comment_Post")
   @@index([writer_id], map: "fk_Comment_User")
+  @@index([parentId], map: "Comment_parentId_fkey")
 }
 
 model Folder {
@@ -52,18 +57,13 @@ model Post {
   writer    Int       @db.UnsignedInt
   content   String?   @db.Text
   Comment   Comment[]
+  Like      Like[]
   Folder    Folder    @relation(fields: [folder], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "post_ibfk_1")
   User      User      @relation(fields: [writer], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "post_ibfk_2")
 
   @@index([folder], map: "fk_Post_folder")
   @@index([writer], map: "fk_Post_writer")
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model StopWord {
-  value String @db.VarChar(31)
-
-  @@ignore
+  @@fulltext([title, content], map: "ft_post_title_content")
 }
 
 model User {
@@ -75,5 +75,24 @@ model User {
   isadmin Boolean   @default(false)
   Account Account[]
   Comment Comment[]
+  Like    Like[]
   Post    Post[]
+}
+
+model Like {
+  id     Int  @id @default(autoincrement()) @db.UnsignedInt
+  postId Int  @db.UnsignedInt
+  userId Int  @db.UnsignedInt
+  Post   Post @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Like_postId")
+  User   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_Like_userId")
+
+  @@unique([postId, userId], map: "uniq_Like_postId_userId")
+  @@index([userId], map: "fk_Like_userId")
+}
+
+model StopWord {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  word       String   @unique(map: "uq_stopwords_word") @db.VarChar(50)
+  enabled    Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamp(0)
 }

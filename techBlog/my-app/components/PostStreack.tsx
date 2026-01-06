@@ -35,7 +35,7 @@ export default function ContributionGraph({
   fontSize = 12,
 }: ContributionGraphProps) {
   return (
-    <div className="flex w-full justify-center rounded-md border p-5 shadow-2xs">
+    <div className="flex w-full justify-center rounded-md p-5 shadow-md">
       <ActivityCalendar
         data={data}
         theme={greenTheme}

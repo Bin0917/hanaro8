@@ -1,9 +1,9 @@
 import Link from 'next/link';
 import type { PropsWithChildren } from 'react';
+import PostStreak from '@/components/PostStreack';
 import { toActivityData } from '@/lib/contribution-utils';
 import { getFolders } from '@/lib/posts.action';
 import { prisma } from '@/lib/prisma';
-import PostStreak from './PostStreack';
 
 export default async function pageLayout({ children }: PropsWithChildren) {
   const folders = await getFolders();
@@ -26,23 +26,26 @@ export default async function pageLayout({ children }: PropsWithChildren) {
         <PostStreak data={data} />
       </div>
 
-      {/* 카테고리 nav바 */}
-      <div className="flex rounded-md border p-5 shadow-2xs">
-        <nav className="gap-2 rounded-md border p-3 shadow-2xs">
-          {folders.map((folder) => {
-            return (
-              <Link
-                className="flex gap-2"
-                href={`/${folder.id}`}
-                key={folder.id}
-              >
-                {folder.title}{' '}
-                <p className="text-emerald-200 text-sm">{folder.readcnt}개</p>
-              </Link>
-            );
-          })}
+      <div className="flex rounded-md p-5 shadow-md">
+        {/* 카테고리 nav바 */}
+        <nav className="gap-1 rounded-md p-3 shadow-md">
+          <div className="space-y-2">
+            {folders.map((folder) => {
+              return (
+                <Link
+                  className="flex items-center justify-between gap-2 rounded-xl p-2 shadow-sm"
+                  href={`/${folder.id}`}
+                  key={folder.id}
+                >
+                  <span className="flex-1">{folder.title}</span>
+                  <span className="text-neutral-400 text-sm">
+                    ({folder.readcnt}개)
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
         </nav>
-        {/* 메인 페이지들! */}
         {children}
       </div>
     </>

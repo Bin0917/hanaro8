@@ -1,12 +1,22 @@
+import PostList from '@/components/PostList';
+import { auth } from '@/lib/auth';
 import { getPosts } from '@/lib/posts.action';
-import PostList from '../PostList';
 
 type Props = {
   params: Promise<{ techName: number }>;
+  searchParams: Promise<{ q?: string }>;
 };
 
-export default async function techPageList({ params }: Props) {
+export default async function techPageList({ params, searchParams }: Props) {
   const { techName } = await params;
-  const posts = await getPosts(Number(techName));
-  return <PostList posts={posts} techName={techName} />;
+  const q = (await searchParams)?.q ?? '';
+
+  const session = await auth();
+
+  const posts =
+    q === ''
+      ? await getPosts(Number(techName), Number(session?.user.id))
+      : await getPosts(undefined, undefined, q);
+
+  return <PostList posts={posts} techName={techName} q={q} />;
 }

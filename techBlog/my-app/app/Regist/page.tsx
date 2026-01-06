@@ -1,4 +1,4 @@
-import RegistForm from './RegistForm';
+import RegistForm from '@/components/RegistForm';
 
 export default function Regist() {
   return (

@@ -27,7 +27,7 @@ const login = async (provider: Provider, formData: FormData) => {
 export const githubLogin = async (formData: FormData) =>
   login('github', formData);
 
-// QQQ
+// QQQl
 export const loginEmail = async (formdata: FormData) => {
   const zobj = z.object({
     email: z.email('올바르지 않은 이메일 양식입니다'),

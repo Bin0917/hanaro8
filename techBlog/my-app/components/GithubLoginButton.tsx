@@ -2,11 +2,13 @@ import { Button } from '@/components/ui/button';
 
 type Props = {
   formAction: (formdata: FormData) => Promise<void>;
+  disabled: boolean;
 };
 
-export function GithubLoginButton({ formAction }: Props) {
+export function GithubLoginButton({ formAction, disabled = false }: Props) {
   return (
     <Button
+      disabled={disabled}
       formAction={formAction}
       className="h-12 w-full gap-2 rounded-md bg-[#181717] text-white hover:bg-black"
     >

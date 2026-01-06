@@ -1,9 +1,9 @@
 'use client';
 
-import { redirect } from 'next/navigation';
-import type { Session } from 'next-auth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { logout } from '@/lib/sign.action';
+import type { Session } from 'next-auth';
+import { redirect } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';

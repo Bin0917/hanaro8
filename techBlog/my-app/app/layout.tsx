@@ -52,7 +52,14 @@ export default function RootLayout({
               </Link>
 
               {session?.user ? (
-                <UserProfile data={session} />
+                <div className="flex justify-end gap-2">
+                  {session?.user.isadmin && (
+                    <Link href="/userList">
+                      <Button variant="destructive">USER_LIST</Button>
+                    </Link>
+                  )}
+                  <UserProfile data={session} />
+                </div>
               ) : (
                 <Link href="/sign">
                   <Button>Login</Button>

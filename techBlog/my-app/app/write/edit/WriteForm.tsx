@@ -54,7 +54,7 @@ export default function WriteForm({ folders, post }: WriteFormProps) {
     undefined,
   );
   return (
-    <div className="rounded-md border p-3 shadow-2xs">
+    <div className="rounded-md p-3 shadow-md">
       <h1 className="mb-3 text-center font-semibold text-2xl">
         {' '}
         {post ? '게시글 수정' : '게시글 작성'}
@@ -110,7 +110,9 @@ export default function WriteForm({ folders, post }: WriteFormProps) {
         <div className="flex justify-around text-white">
           {/* 버튼 타입 잘 주기 */}
           <Link href={'/'}>
-            <Button variant={'secondary'} disabled={isPending}>돌아가기</Button>
+            <Button variant={'secondary'} disabled={isPending}>
+              돌아가기
+            </Button>
           </Link>
           <Button type="submit" disabled={isPending}>
             저장{isPending && '...'}

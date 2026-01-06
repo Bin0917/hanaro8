@@ -1,14 +1,6 @@
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -18,12 +10,11 @@ export function DialogMy() {
       <DialogTrigger asChild>
         <Button variant="default">Login</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        {/* <DialogHeader>
+      <DialogContent className="sm:max-w-106.25">
+        <DialogHeader>
             <DialogTitle>Login</DialogTitle>
             <DialogDescription>
-              Make changes to your profile here. Click save when you&apos;re
-              done.
+              로그인하세요
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
@@ -35,13 +26,13 @@ export function DialogMy() {
               <Label htmlFor="username-1">Password</Label>
               <Input type="password" name="password" />
             </div>
-          </div> */}
-        {/* <DialogFooter>
+          </div>
+        <DialogFooter>
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button type="submit">Login</Button>
-          </DialogFooter> */}
+          </DialogFooter>
 
         
       </DialogContent>
