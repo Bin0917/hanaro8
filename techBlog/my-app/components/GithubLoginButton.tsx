@@ -11,6 +11,7 @@ export function GithubLoginButton({ formAction, disabled = false }: Props) {
       disabled={disabled}
       formAction={formAction}
       className="h-12 w-full gap-2 rounded-md bg-[#181717] text-white hover:bg-black"
+      aria-label="깃허브로그인"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

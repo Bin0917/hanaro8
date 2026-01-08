@@ -1,10 +1,11 @@
 'use server';
 import { revalidatePath } from 'next/cache';
 import { AuthError } from 'next-auth';
+import { cache } from 'react';
 import z from 'zod';
 import { auth } from './auth';
 import { Prisma } from './generated/prisma/client';
-import { requireAdmin, requireOwnerOrAdmin } from './guard';
+import { requireAdmin, requireOwnerOrAdmin, requireUser } from './guard';
 import { prisma } from './prisma';
 import { validate } from './validator';
 
@@ -42,38 +43,59 @@ export const getFolders = async () => {
 };
 
 // 게시글 포스트 액션
+const getStopWords = cache(async () => {
+  const stopwords = await prisma.stopWord.findMany({
+    where: { enabled: true },
+    select: { word: true },
+  });
+  return new Set(stopwords.map((s) => s.word));
+});
+
 export const getPosts = async (
   folder?: number,
   userId?: number,
   q?: string,
 ) => {
   const query = (q ?? '').trim();
+
   if (!query) {
-    const include = {
-      _count: { select: { Like: true } },
-      ...(userId ? { Like: { where: { userId } } } : {}),
-    };
+    // 2) include → select로 변경 (필요한 것만 가져오기)
     const posts = await prisma.post.findMany({
       orderBy: { createdAt: 'desc' },
       where: folder ? { folder } : undefined,
-      include,
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        writer: true,
+        updatedAt: true,
+        createdAt: true,
+        folder: true,
+        _count: {
+          select: { Like: true },
+        },
+        // 3) Like는 현재 유저 것만 (1개만)
+        Like: userId
+          ? {
+              where: { userId },
+              take: 1, // 있는지 여부만 확인
+              select: { userId: true },
+            }
+          : false, // userId 없으면 아예 안 가져옴
+      },
     });
     return posts;
   }
 
-  // stopword 로드
-  const stopwords = await prisma.stopWord.findMany({
-    where: { enabled: true },
-    select: { word: true },
-  });
-  const stop = new Set(stopwords.map((s) => s.word));
+  // 5) stopword 캐시 사용
+  const stop = await getStopWords();
 
   // 토큰화 + 불용어 제거
   const tokens = query
-    .split(/\s+/)
-    .map((t) => t.trim())
+    .split(/\s+/) // 스페이스 나누기
+    .map((t) => t.trim()) // 공백 날리기
     .filter(Boolean)
-    .filter((t) => !stop.has(t));
+    .filter((t) => !stop.has(t)); // 불용어제거
 
   if (tokens.length === 0) return [];
 
@@ -95,12 +117,27 @@ export const getPosts = async (
   const ids = hits.map((h) => Number(h.id));
   if (ids.length === 0) return [];
 
-  // 2) prisma: 관계(include/_count/Like필터) 붙여서 다시 조회
+  // 6) 검색 결과도 동일하게 최적화
   const posts = await prisma.post.findMany({
     where: { id: { in: ids } },
-    include: {
-      _count: { select: { Like: true } },
-      Like: userId ? { where: { userId } } : true,
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      writer: true,
+      updatedAt: true,
+      createdAt: true,
+      folder: true,
+      _count: {
+        select: { Like: true },
+      },
+      Like: userId
+        ? {
+            where: { userId },
+            take: 1,
+            select: { userId: true },
+          }
+        : false,
     },
   });
 
@@ -111,12 +148,13 @@ export const getPosts = async (
     const ib = order.get(b.id);
     return (ia ?? Number.MAX_SAFE_INTEGER) - (ib ?? Number.MAX_SAFE_INTEGER);
   });
+
   return posts;
 };
 
 export const getPost = async (postId: number) => {
   const post = await prisma.post.findUnique({
-    where: { id: Number(postId) },
+    where: { id: postId },
     select: {
       id: true,
       title: true,
@@ -136,16 +174,11 @@ export const savePostAction = async (formData: FormData) => {
   await requireAdmin();
 
   const session = await auth();
-  if (!session?.user?.id) {
-    return [{ error: { message: '로그인 필요' } }, null];
+  if (!session?.user?.isadmin) {
+    return [{ error: { message: '관리자 로그인 필요' } }, null];
   }
   if (!formData.get('folder')) {
-    return [
-      {
-        error: { folder: '게시판을 선택해주세요' },
-        data: {}, // 입력했던 데이터는 유지!
-      },
-    ];
+    return [{ error: { folder: '게시판을 선택해주세요' } }, null];
   }
 
   const zobj = z.object({
@@ -155,7 +188,7 @@ export const savePostAction = async (formData: FormData) => {
 
   const [err, data] = validate(zobj, formData);
 
-  if (err) return err;
+  if (err) return [err, null];
   const { title, content } = data;
 
   const postId = formData.get('postId');
@@ -189,10 +222,8 @@ export const savePostAction = async (formData: FormData) => {
     return [null, String(folder)];
   } catch (e) {
     return [
-      {
-        error: { message: `ERROR:${e} / DB 저장에 실패했습니다..` },
-        data: {},
-      },
+      { error: { message: `ERROR:${e} / DB 저장에 실패했습니다..` } },
+      null,
     ];
   }
 };
@@ -213,7 +244,6 @@ export const deletePost = async (
     });
     revalidatePath(`/${path}`);
   } catch (e) {
-    //!!타입잡아야함
     return { error: e };
   }
 };
@@ -260,21 +290,32 @@ export const deleteComment = async (
 ) => {
   const comment = await prisma.comment.findUnique({ where: { id: commentId } });
   if (!comment) throw new Error('댓글이 존재하지 않습니다.');
-  await requireOwnerOrAdmin(comment?.writer_id);
-  try {
+
+  const { isAdmin, userId } = await requireUser();
+  if (isAdmin) {
+    // 어드민 & 어드민이 작성한 댓글일 경우
+    if (comment.writer_id === userId) {
+      await prisma.comment.deleteMany({ where: { parentId: commentId } });
+      await prisma.comment.delete({
+        where: { id: commentId },
+      });
+    } else {
+      await prisma.comment.update({
+        where: { id: commentId },
+        data: { content: '삭제된 댓글입니다', deletedAt: new Date() },
+      });
+    }
+  } else {
+    // 오너확인
+    await requireOwnerOrAdmin(comment.writer_id);
+    // 답글 삭제 -> 본 댓글 삭제
+    await prisma.comment.deleteMany({ where: { parentId: commentId } });
     await prisma.comment.delete({
       where: { id: commentId },
     });
-    // 값이 있다면 그 폴더로, 없다면 루트에서 보던 것이므로 루트로
-    if (folderId) {
-      revalidatePath(`/${folderId}`);
-    } else {
-      revalidatePath('/');
-    }
-  } catch (e) {
-    alert('삭제에 실패했습니다');
-    console.log(e);
   }
+  // 값이 있다면 그 폴더로, 없다면 루트에서 보던 것이므로 루트로
+  revalidatePath(folderId ? `/${folderId}` : '/');
 };
 
 export const saveComment = async (formData: FormData) => {
@@ -287,7 +328,7 @@ export const saveComment = async (formData: FormData) => {
   });
 
   const [err, datas] = validate(zobj, formData);
-  if (err) return err;
+  if (err) return [err, null];
 
   const { content } = datas;
 
@@ -324,22 +365,39 @@ export const updateComment = async (formData: FormData) => {
   const commentId = Number(formData.get('comment_id'));
   const content = String(formData.get('content') ?? '');
 
-  const comment = await prisma.comment.findUnique({ where: { id: commentId } });
-  if (!comment) return [{ error: { message: '댓글이 없습니다' }, data: {} }];
-  if (comment.content.trim() === content) {
-    return [{ error: { content: '수정된 내용이 없습니다.' }, data: {} }];
-  }
+  if (!commentId)
+    return [{ error: { message: '잘못된 요청' }, data: {} }] as const;
+  if (!content)
+    return [{ error: { content: '내용을 입력하세요.' }, data: {} }] as const;
+  const comment = await prisma.comment.findUnique({
+    where: { id: commentId },
+    select: { writer_id: true },
+  });
+  if (!comment)
+    return [{ error: { message: '댓글이 없습니다' }, data: {} }] as const;
 
-  await requireOwnerOrAdmin(comment?.writer_id);
-  // TODO: 유효성 검사/에러 리턴은 saveComment 스타일에 맞춰서 동일하게 처리
+  await requireOwnerOrAdmin(comment.writer_id);
   try {
-    await prisma.comment.update({
+    const result = await prisma.comment.updateMany({
       where: {
         id: commentId,
+        deletedAt: null,
+        content: { not: content },
       },
       data: { content },
-    });
-    return [undefined, content];
+    }); // updateMany 패턴
+
+    if (result.count === 0) {
+      // deletedAt이 있거나, 내용이 동일한 경우
+      return [
+        {
+          error: { content: '삭제된 댓글이거나 수정된 내용이 없습니다.' },
+          data: {},
+        },
+      ] as const;
+    }
+
+    return [undefined, content] as const;
   } catch (err) {
     if (err instanceof AuthError) {
       const msg = err.message || 'EmailSignInError';
@@ -358,15 +416,13 @@ export const getCommentsCnt = async (postId: number) => {
 };
 
 // 좋아요 액션
-// lib/posts.action.ts
 export const toggleLike = async (postId: number, userId: number) => {
+  await requireUser();
   const deleted = await prisma.like.deleteMany({
     where: { postId, userId },
   });
 
   const liked = deleted.count === 0;
-
-  await requireOwnerOrAdmin(userId);
 
   if (liked) {
     await prisma.like.create({

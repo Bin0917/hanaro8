@@ -8,7 +8,6 @@ export function getLevel(count: number): 0 | 1 | 2 | 3 | 4 {
 }
 
 // 최근 1년 빈 데이터 생성
-// 개선된 버전
 export function generateEmptyYear() {
   const data = [];
   const today = new Date();
@@ -17,13 +16,13 @@ export function generateEmptyYear() {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
 
-    // ✅ 로컬 타임존 고려
+    // 로컬 타임존 고려
     const localDateStr = date.toLocaleDateString('en-CA'); // YYYY-MM-DD
 
     data.push({
       date: localDateStr,
       count: 0,
-      level: 0 as 0 | 1 | 2 | 3 | 4, // ← 원래 코드 방식
+      level: 0 as 0 | 1 | 2 | 3 | 4,
     });
   }
 

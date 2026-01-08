@@ -1,9 +1,9 @@
 'use client';
 
+import { redirect } from 'next/navigation';
+import type { Session } from 'next-auth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { logout } from '@/lib/sign.action';
-import type { Session } from 'next-auth';
-import { redirect } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card';
@@ -21,16 +21,16 @@ export default function UserProfile({ data }: { data: Session }) {
   const Comp = isMobile
     ? { comp: Popover, trigger: PopoverTrigger, content: PopoverContent }
     : { comp: HoverCard, trigger: HoverCardTrigger, content: HoverCardContent };
-  console.log(data.user.isadmin);
   return (
     <Comp.comp>
       <Comp.trigger asChild>
         <Button
           variant="ghost"
           className="touch-none md:pointer-events-auto md:touch-auto"
+          aria-label="프로필"
         >
           <Avatar>
-            <AvatarImage src={profileImg} />
+            <AvatarImage src={profileImg} alt="유저이미지" />
           </Avatar>
         </Button>
       </Comp.trigger>
@@ -53,6 +53,7 @@ export default function UserProfile({ data }: { data: Session }) {
                 await logout();
               }}
               variant={'outline'}
+              aria-label="로그아웃"
             >
               LogOut
             </Button>

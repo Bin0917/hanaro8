@@ -1,4 +1,3 @@
-// lib/guards.ts
 'use server';
 
 import { auth } from '@/lib/auth';
@@ -16,7 +15,7 @@ export async function requireAdmin() {
   if (!isAdmin) throw new Error('Forbidden');
 }
 
-// 둘 다 가능
+// 둘 다 가능, 오너 판별 가능
 export async function requireOwnerOrAdmin(ownerId: number) {
   const { userId, isAdmin } = await requireUser();
   if (!isAdmin && userId !== ownerId) throw new Error('Forbidden');

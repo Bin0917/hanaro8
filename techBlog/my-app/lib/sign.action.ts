@@ -1,5 +1,6 @@
 'use server'; // 서버단에서 실행
 
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { redirect } from 'next/navigation';
 import { AuthError } from 'next-auth';
 import z from 'zod';
@@ -29,6 +30,8 @@ export const githubLogin = async (formData: FormData) =>
 
 // QQQl
 export const loginEmail = async (formdata: FormData) => {
+  const redirectTo = (formdata.get('redirectTo') as string) || '/userProfile';
+
   const zobj = z.object({
     email: z.email('올바르지 않은 이메일 양식입니다'),
     passwd: z.string().min(4, '올바르지 않은 비밀번호 입니다'),
@@ -38,9 +41,11 @@ export const loginEmail = async (formdata: FormData) => {
   if (err) return [err];
   try {
     // useActionState를 위해 redirect 금지
-    await signIn('credentials', { redirect: false, ...data });
+    await signIn('credentials', { redirect: true, redirectTo, ...data });
     return [undefined, data];
   } catch (err) {
+    if (isRedirectError(err)) throw err;
+
     if (err instanceof AuthError) {
       const msg = err.message || 'EmailSignInError';
       const email = msg.substring(0, msg.indexOf('Read more'));
@@ -50,7 +55,6 @@ export const loginEmail = async (formdata: FormData) => {
   }
 };
 
-// QQQ 리턴타입
 export const regist = async (
   _: ValidError | undefined,
   formData: FormData,
@@ -64,7 +68,7 @@ export const regist = async (
       email: z.email(),
       name: z.string().min(1, 'Input name At least 1').max(30),
       passwd: z.string().min(4, 'Input password At least 4'),
-      passwd2: z.string().min(4),
+      passwd2: z.string().min(4, 'Input password At least 4'),
       image: z.nullable(z.string()),
     })
     .refine(({ passwd, passwd2 }) => passwd === passwd2, {

@@ -1,6 +1,5 @@
 import { SearchIcon } from 'lucide-react';
 
-// app/(page)/SearchBar.tsx (Server Component)
 export default function SearchForm({ q = '' }: { q?: string }) {
   return (
     <form method="GET" className="flex gap-2">
@@ -10,7 +9,7 @@ export default function SearchForm({ q = '' }: { q?: string }) {
         placeholder="Search.."
         className="w-full rounded border px-3 py-2 shadow-xs"
       />
-      <button type="submit" className="rounded p-3">
+      <button type="submit" className="rounded p-3" aria-label="검색">
         <SearchIcon />
       </button>
     </form>

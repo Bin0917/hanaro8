@@ -128,4 +128,6 @@
   button:active {
    @apply scale-90 duration-75 
   }
+  html {
+  font-size: clamp(75%, 1vw, 125%);  }
 }

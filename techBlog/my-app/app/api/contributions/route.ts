@@ -1,5 +1,3 @@
-// app/api/contributions/route.ts
-
 import { NextResponse } from 'next/server';
 import { toActivityData } from '@/lib/contribution-utils';
 import { prisma } from '@/lib/prisma';

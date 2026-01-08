@@ -24,26 +24,19 @@ export default async function CommentSection({
     <>
       <div className="border-t p-3 text-gray-600 text-sm">댓글창</div>
       <div className="rounded-md p-3 shadow-2xs">
-        <div>
-          {/* 
-            const comments = await getComments(postId);
-              const session = await auth();
-              const currentUserId = session?.user?.id ? Number(session.user.id) : null;
-            */}
-          <CommentList
-            comments={comments}
-            userId={Number(session?.user.id)}
+        {isLogin && (
+          <CommentForm
+            postId={postId}
+            userId={Number(userId)}
             folderId={folderId}
-            isAdmin={isAdmin}
           />
-          {isLogin && (
-            <CommentForm
-              postId={postId}
-              userId={Number(userId)}
-              folderId={folderId}
-            />
-          )}
-        </div>
+        )}
+        <CommentList
+          comments={comments}
+          userId={Number(session?.user.id)}
+          folderId={folderId}
+          isAdmin={isAdmin}
+        />
       </div>
     </>
   );

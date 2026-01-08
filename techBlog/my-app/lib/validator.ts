@@ -1,6 +1,6 @@
+import { existsSync, mkdirSync } from 'node:fs';
+import { writeFile } from 'node:fs/promises';
 import { compare, hash } from 'bcryptjs';
-import { existsSync, mkdirSync } from 'fs';
-import { writeFile } from 'fs/promises';
 // biome-ignore lint/style/useNodejsImportProtocol: edge runtime
 import path from 'path';
 import z from 'zod';

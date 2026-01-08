@@ -1,4 +1,4 @@
-import { Terminal } from 'lucide-react';
+import { DoorOpen, Terminal } from 'lucide-react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
@@ -19,9 +19,18 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
+// 메타데이터 걸어주기
 export const metadata: Metadata = {
   title: 'Beans tech-Blog',
   description: 'Generated next vision',
+  authors: [{ name: '이승빈' }],
+  openGraph: {
+    title: 'Beans tech-Blog',
+    description: 'Generated next vision',
+    siteName: 'BEANS',
+    locale: 'ko_KR',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({
@@ -55,19 +64,24 @@ export default function RootLayout({
                 <div className="flex justify-end gap-2">
                   {session?.user.isadmin && (
                     <Link href="/userList">
-                      <Button variant="destructive">USER_LIST</Button>
+                      <Button aria-label="유저리스트" variant="destructive">
+                        USER_LIST
+                      </Button>
                     </Link>
                   )}
                   <UserProfile data={session} />
                 </div>
               ) : (
                 <Link href="/sign">
-                  <Button>Login</Button>
+                  <Button aria-label="로그인" className="font-semibold">
+                    LOGIN
+                    <DoorOpen />
+                  </Button>
                 </Link>
               )}
             </div>
             <div>{children}</div>
-            <footer>2025 hanaro_LEESEUNGBIN</footer>
+            <footer className="mt-3">2025 hanaro_LEESEUNGBIN</footer>
           </div>
         </SessionProvider>
       </body>

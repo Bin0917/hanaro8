@@ -1,5 +1,5 @@
-import { DialogMy } from "@/components/DialogMy";
-import { Meta, StoryObj } from "@storybook/nextjs-vite";
+import type { Meta, StoryObj } from '@storybook/nextjs-vite';
+import { DialogMy } from '@/components/DialogMy';
 
 const meta: Meta<typeof DialogMy> = { component: DialogMy };
 export default meta;

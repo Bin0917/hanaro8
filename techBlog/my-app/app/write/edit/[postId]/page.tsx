@@ -1,5 +1,5 @@
+import WriteForm from '@/components/WriteForm';
 import { getFolders, getPost } from '@/lib/posts.action';
-import WriteForm from '../WriteForm';
 
 export default async function EditPage({
   params,

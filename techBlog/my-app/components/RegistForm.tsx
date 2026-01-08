@@ -7,13 +7,6 @@ import { Label } from '@/components/ui/label';
 import { regist } from '@/lib/sign.action';
 
 export default function RegistForm() {
-  // const defaultError = {
-  //     error: {},
-  //     data: {
-  //       email: 'sico@gmail.com', name: 'sico',
-  //     }
-  //   }
-
   const [validError, login, isPending] = useActionState(regist, undefined);
 
   return (
@@ -84,7 +77,12 @@ export default function RegistForm() {
               )}
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+            aria-label="회원가입버튼"
+          >
             Regist{isPending && '...'}
           </Button>
         </form>

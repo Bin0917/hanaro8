@@ -1,7 +1,6 @@
 'use client';
-import type { Route } from 'next';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +17,7 @@ import type { ValidError } from '@/lib/validator';
 import { GithubLoginButton } from './GithubLoginButton';
 
 export default function LoginForm() {
-  const router = useRouter();
+  // const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('callbackUrl') || '/';
 
@@ -29,8 +28,7 @@ export default function LoginForm() {
         return err as ValidError;
       }
 
-      console.log('🚀 ~ redirectTo:', redirectTo);
-      router.push(redirectTo as Route);
+      await new Promise((resolve) => setTimeout(resolve, 100));
     },
     undefined,
   );
@@ -42,7 +40,9 @@ export default function LoginForm() {
 
         <CardAction>
           <Link href="/Regist">
-            <Button variant="link">Sign Up</Button>
+            <Button variant="link" aria-label="회원가입">
+              Sign Up
+            </Button>
           </Link>
         </CardAction>
       </CardHeader>
@@ -76,7 +76,14 @@ export default function LoginForm() {
               )}
             </div>
           </div>
-          <Button type="submit" className="w-full" disabled={isPending}>
+          <input type="hidden" name="redirectTo" value={redirectTo} />
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
+            aria-label="로그인"
+          >
             LogIn{isPending && '...'}
           </Button>
         </form>

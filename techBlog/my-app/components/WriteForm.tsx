@@ -18,12 +18,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { savePostAction } from '@/lib/posts.action';
 import type { ValidError } from '@/lib/validator';
 
-// type FOLDERS = {
-//   title: string;
-//   id: number;
-//   readcnt: number;
-// };
-
 type Folder = {
   id: number;
   title: string;
@@ -64,9 +58,14 @@ export default function WriteForm({ folders, post }: WriteFormProps) {
         <div className="flex gap-2">
           <DropdownMenu onOpenChange={toggleOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant={'outline'} type="button">
-                {folder ? folder?.title : 'Select'}
-                {/* useReducer로 열림 유무 저장. 해당 플래그로 아이콘 상태 핸들링 */}
+              <Button
+                variant={'outline'}
+                type="button"
+                aria-label="작성토글"
+                disabled={!!post}
+              >
+                Select
+                {/* useState 열림 유무 저장. 해당 플래그로 아이콘 상태 핸들링 */}
                 {isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
               </Button>
             </DropdownMenuTrigger>
@@ -102,19 +101,18 @@ export default function WriteForm({ folders, post }: WriteFormProps) {
           disabled={isPending}
         />
 
-        {/* {!!validError && (
-          // 잠시대기
-          <span className="text-red-500">{validError.error}</span>
-        )} */}
-
         <div className="flex justify-around text-white">
           {/* 버튼 타입 잘 주기 */}
           <Link href={'/'}>
-            <Button variant={'secondary'} disabled={isPending}>
+            <Button
+              variant={'secondary'}
+              disabled={isPending}
+              aria-label="돌아가기"
+            >
               돌아가기
             </Button>
           </Link>
-          <Button type="submit" disabled={isPending}>
+          <Button type="submit" disabled={isPending} aria-label="저장">
             저장{isPending && '...'}
           </Button>
         </div>

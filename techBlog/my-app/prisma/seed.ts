@@ -2,8 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { encryptPassword } from '@/lib/validator';
 
 async function main() {
-  // 0) 개발용 초기화(원하면 주석 처리)
-  // FK cascade가 걸려 있어도, 안전하게 자식 -> 부모 순으로 지우는 편이 무난함.
+  // 0) 개발용 초기화
+  // FK cascade가 걸려 있어도, 안전하게 자식 -> 부모 순으로 지
   await prisma.like.deleteMany();
   await prisma.comment.deleteMany();
   await prisma.post.deleteMany();
@@ -30,7 +30,6 @@ async function main() {
     update: {
       name: '테스트유저',
       isadmin: true,
-      // passwd는 굳이 매번 업데이트 안 해도 되면 빼도 됨
       passwd: hashed,
     },
     create: {

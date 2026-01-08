@@ -12,7 +12,7 @@ export default async function Page({ searchParams }: Prop) {
   const posts =
     q === ''
       ? await getPosts(undefined, Number(session?.user.id))
-      : await getPosts(undefined, undefined, q);
+      : await getPosts(undefined, Number(session?.user.id), q);
 
   return <PostList posts={posts} q={q} />;
 }

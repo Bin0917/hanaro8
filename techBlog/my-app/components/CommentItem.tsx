@@ -42,10 +42,6 @@ export default function CommentItem({
   const [isReplying, setIsReplying] = useState(false);
 
   return (
-    // {editingId === comment.writer_id ?
-    //     <CommentForm postId={}/>
-
-    //     :}
     <div className="rounded-md border p-3 shadow-xs">
       {/* 작성자 & 게시시간 */}
       <div className="text-sm">
@@ -65,15 +61,19 @@ export default function CommentItem({
           <div className="p-2">{comment.content}</div>
         )}
       </div>
-      <p className="flex justify-end text-gray-400 text-xs">
+      <p className="flex justify-end text-gray-600 text-xs">
         {comment.createdAt.toLocaleDateString()}{' '}
         {comment.createdAt.toLocaleTimeString()}
       </p>
-      {/* QQQ 댓글 내용 => 아래 리팩토링 필요 */}
+
       {(isOwner || isAdmin === true) && (
         <div className="flex justify-end gap-2 p-2 text-red-400 text-xs">
           {!isEditing && (
-            <Button variant="link" onClick={() => setIsEditing(true)}>
+            <Button
+              variant="link"
+              onClick={() => setIsEditing(true)}
+              aria-label="댓글수정"
+            >
               <PenLine />
             </Button>
           )}
@@ -86,13 +86,18 @@ export default function CommentItem({
               setIsDeleting(false);
             }}
             disabled={isDeleting}
+            aria-label="댓글삭제"
           >
             <X />
           </Button>
         </div>
       )}
       {!isChild && (
-        <Button variant="link" onClick={() => setIsReplying((v) => !v)}>
+        <Button
+          variant="link"
+          onClick={() => setIsReplying((v) => !v)}
+          aria-label="답글토글"
+        >
           <ListPlus />
         </Button>
       )}
@@ -101,7 +106,6 @@ export default function CommentItem({
           mode="create"
           postId={comment.post_id}
           userId={currentUserId}
-          // ✅ CommentForm 내부에 parent_id hidden input 추가하도록 props로 parentId 전달
           parentId={comment.id}
           onCancelAction={() => setIsReplying((v) => !v)}
           folderId={folderId}

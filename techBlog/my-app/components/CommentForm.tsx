@@ -1,4 +1,3 @@
-// components/CommentForm.tsx
 'use client';
 
 import { Check, CheckCheck, Undo2 } from 'lucide-react';
@@ -13,10 +12,11 @@ type Props = {
   postId: number;
   userId: number;
   folderId: number | undefined;
-  // ✅ 수정: edit 모드용
+  // edit 모드용
   mode?: 'create' | 'edit';
   commentId?: number;
-  content?: string; // 기존 content 그대로 재사용(초기값 역할)
+  content?: string;
+  // 토글창edit 닫기용
   onCancelAction?: () => void;
   parentId?: number;
 };
@@ -49,13 +49,15 @@ export default function CommentForm({
       if (err) return err as ValidError;
 
       if (mode === 'edit') {
-        onCancelAction?.();
         router.refresh();
+        onCancelAction?.();
       } else {
         if (folderId) {
           router.push(`/${folderId}`);
+          onCancelAction?.();
         } else {
           router.push('/');
+          onCancelAction?.();
         }
       }
     },
@@ -70,6 +72,7 @@ export default function CommentForm({
         rows={3}
         className="w-full rounded p-2 shadow-md"
         disabled={isPending}
+        //수정시 기존 데이터 넣어주기
         value={draft}
         onChange={(e) => setDraft(e.target.value)}
       />
@@ -83,8 +86,9 @@ export default function CommentForm({
       {validError?.error && (
         <p className="mt-1 text-red-500 text-sm">{validError?.error.content}</p>
       )}
+
       <div className="flex justify-center gap-3 p-3">
-        <Button type="submit" disabled={isPending}>
+        <Button aria-label="수정" type="submit" disabled={isPending}>
           {isPending ? (
             mode === 'edit' && '...'
           ) : mode === 'edit' ? (
@@ -94,13 +98,14 @@ export default function CommentForm({
           )}
         </Button>
 
-        {/* ✅ 수정: 수정모드일 때 취소 버튼 */}
+        {/* 수정모드일 때 취소 버튼 */}
         {mode === 'edit' && (
           <Button
             type="button"
             variant="outline"
             onClick={() => onCancelAction?.()}
             disabled={isPending}
+            aria-label="취소"
           >
             <Undo2 />
           </Button>

@@ -9,7 +9,7 @@ import SearchForm from './SearchForm';
 
 type PostListProps = {
   posts: Post[];
-  techName?: number; // 폴더별 페이지용 (선택)
+  techName?: number; // 폴더별 페이지용
   q?: string;
 };
 
@@ -24,7 +24,7 @@ export default async function PostList({
   const currentUserId = session?.user?.id ? Number(session.user.id) : null;
 
   return (
-    <div className="mx-auto w-4/5 space-y-4 rounded-md p-4 shadow-md">
+    <div className="mx-auto w-full max-w-4xl space-y-4 rounded-md p-4 px-4 shadow-md">
       <div>
         <SearchForm q={q} />
       </div>
@@ -38,13 +38,12 @@ export default async function PostList({
             className="space-y-3 rounded-md border p-4 shadow-md"
             key={post.id}
           >
-            <div className="font-bold text-xl">{post.title}</div>
-            <div className="h-30 rounded-md p-2 shadow-md">{post.content}</div>
+            <div className="font-bold text-2xl">{post.title}</div>
+            <div className="rounded-md p-3 shadow-md">{post.content}</div>
 
             {/* 기타 툴 */}
             <div>
               {/* 좋아요 & 댓글 */}
-              <div className=""></div>
 
               {/* 작성자 & 작성시간 */}
               <div className="flex justify-end gap-2 text-gray-600 text-xs">
@@ -68,18 +67,21 @@ export default async function PostList({
                       techName ? String(techName) : '/',
                     );
                   }}
+                  aria-label="게시글 삭제"
                 >
                   Delete
                 </Button>
                 <Link href={`/write/edit/${post.id}` as Route}>
-                  <Button>Update</Button>
+                  <Button aria-label="게시글 수정">Update</Button>
                 </Link>
               </form>
             )}
             <LikeButton
               postId={post.id}
               userId={currentUserId}
+              // 초기 좋아요 카운팅
               initialLikeCount={post._count.Like}
+              // 이미 좋아요를 누른 유저인지
               initialLiked={initialLiked}
             />
             <CommentSection
@@ -94,8 +96,8 @@ export default async function PostList({
       })}
       {isAdmin && (
         <div className="flex justify-center">
-          <Link href="/write/edit" className="">
-            <Button>Write</Button>
+          <Link href="/write/edit">
+            <Button aria-label="게시글 작성">Write</Button>
           </Link>
         </div>
       )}

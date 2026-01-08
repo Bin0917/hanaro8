@@ -76,8 +76,6 @@ export const {
       user.image = olduser.image;
       user.isadmin = olduser.isadmin; // 관리자 여부 포함
 
-      // console.log(user);
-      // console.log('로그인 성공!!');
       return true; // 위 조건 통과시, 로그인 허용
     },
     async jwt({ user, token }) {

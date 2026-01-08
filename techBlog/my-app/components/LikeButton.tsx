@@ -1,4 +1,3 @@
-// components/LikeButton.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -21,11 +20,11 @@ export default function LikeButton({
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [isLiked, setIsLiked] = useState(initialLiked);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: to toggle -> notchageErrorfix
+  // biome-ignore lint/correctness/useExhaustiveDependencies: to toggle -> notchage_Errorfix
   useEffect(() => {
     setIsLiked(initialLiked); // initialLiked 반영
     setLikeCount(initialLikeCount); //  initialLikeCount도 같이 반영
-  }, [postId, userId, initialLiked, initialLikeCount]); // 의존성 정확히
+  }, [postId, userId, initialLiked, initialLikeCount]);
 
   const changeLikeState = async () => {
     if (!userId) return;
@@ -43,6 +42,7 @@ export default function LikeButton({
       variant="outline"
       className="flex items-center gap-1"
       disabled={userId === null}
+      aria-label="좋아요"
     >
       <span>{isLiked ? '❤️' : '🤍'}</span>
       <span>{likeCount}</span>

@@ -1,4 +1,3 @@
-'use client';
 import CommentItem, { type Comment } from './CommentItem';
 
 type Prop = {

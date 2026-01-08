@@ -8,6 +8,7 @@ import { prisma } from '@/lib/prisma';
 export default async function pageLayout({ children }: PropsWithChildren) {
   const folders = await getFolders();
 
+  // 스트릭 데이터 내려주기위한 접근
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
@@ -25,7 +26,6 @@ export default async function pageLayout({ children }: PropsWithChildren) {
       <div className="p-6">
         <PostStreak data={data} />
       </div>
-
       <div className="flex rounded-md p-5 shadow-md">
         {/* 카테고리 nav바 */}
         <nav className="gap-1 rounded-md p-3 shadow-md">
@@ -38,14 +38,15 @@ export default async function pageLayout({ children }: PropsWithChildren) {
                   key={folder.id}
                 >
                   <span className="flex-1">{folder.title}</span>
-                  <span className="text-neutral-400 text-sm">
-                    ({folder.readcnt}개)
+                  <span className="text-gray-600 text-sm">
+                    ({folder.readcnt})
                   </span>
                 </Link>
               );
             })}
           </div>
         </nav>
+
         {children}
       </div>
     </>
