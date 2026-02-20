@@ -1,19 +1,60 @@
 package org.hana8.trythis;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.hana8.Annotations.AnnotationException;
+import org.hana8.Annotations.In;
+import org.hana8.Annotations.Max;
+import org.hana8.Annotations.Min;
+import org.hana8.Annotations.NotNull;
 
 public class Reflects {
-	public static void validate(Object obj) {
-		Class<?> clz = obj.getClass();
+	public static Map<String, List<String>> validate(Object obj) {
+		Map<String, List<String>> msgs = new HashMap<>();
 
-		for (Field f : clz.getDeclaredFields()) {
-			f.setAccessible(true);
+		try {
+			for (Field f : obj.getClass().getDeclaredFields()) {
+				f.setAccessible(true);
+				Annotation[] annotations = f.getAnnotations();
+				if (annotations.length == 0)
+					continue;
 
-			if (f.isAnnotationPresent(NotNull.class)) {
+				String fname = f.getName();
+				Object fval = f.get(obj);
+
+				// if 를 switch로 바꾸기!! 걍 이따 통으로 다시 돌림서 따라가자
+
+				for (Annotation ann : annotations) {
+					String msg = switch (ann.annotationType().getSimpleName()) {
+						case "NotNull" -> {
+							if (fval != null)
+								yield null;
+							NotNull annotation = f.getAnnotation(NotNull.class);
+							yield annotation.value();
+						}
+						case "Min" -> Min.Validate.validate(f, fval);
+						case "Max" -> Max.Validate.validate(f, fval);
+						case "In" -> In.Validate.validate(f, fval);
+						default -> throw new AnnotationException("Unknown Annotation..");
+					};
+
+					if (msg != null) {
+						msgs.computeIfAbsent(fname, k -> new ArrayList<>());
+						msgs.get(fname).add(msg);
+					}
+				}
 
 			}
-		}
 
+		} catch (Exception e) {
+			throw new AnnotationException(e.getMessage());
+		}
+		return msgs;
 	}
 
 	public static void makeNotNullFields(Object obj) {
@@ -61,10 +102,15 @@ public class Reflects {
 
 	public static void main(String[] args) throws IllegalAccessException {
 		// Reflection r = new Reflection();
-		Reflection r = new Reflection(5, "");
-		String[] msg = Reflects.validate(r);
+		Reflection r = new Reflection();
 		System.out.println("before = " + r);
 		Reflects.makeNotNullFields(r);
 		System.out.println("after = " + r);
+
+		System.out.println("=========================");
+		Reflection r2 = new Reflection(5, "dddd");
+		// Reflection r2 = new Reflection(null, null);
+		Map<String, List<String>> msg = Reflects.validate(r2);
+		System.out.println(msg);
 	}
 }

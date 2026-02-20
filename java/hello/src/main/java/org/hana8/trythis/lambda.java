@@ -46,8 +46,8 @@ public class lambda {
 		return -1;
 	}
 
-	// rere 오홍이
 	static Integer reducer(List<Integer> list, int initValue, MyReducer<Integer, Integer> reducer) {
+		// 그냥바로 initValue로 시작해도 될 듯
 		int acc = initValue;
 
 		for (int i : list) {

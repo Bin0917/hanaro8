@@ -9,7 +9,7 @@ public enum Operation {
 	MULTIPLY('*', BigDecimal::multiply),
 	DIVIDE('/', BigDecimal::divide);
 
-	private final char cmd;
+	private final char cmd; // 사칙연산 기호 저장 칸
 	private final BinaryOperator<BigDecimal> fn;
 
 	Operation(char cmd, BinaryOperator<BigDecimal> fn) {

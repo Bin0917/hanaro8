@@ -97,6 +97,12 @@ class Emp {
 			.collect
 				(Collectors.groupingBy(Emp::getDept, LinkedHashMap::new,
 					Collectors.maxBy(Comparator.comparingInt(Emp::getScore))));
+
+		candidate.stream()
+			.sorted(Comparator.comparing(Emp::getName))
+			.sorted(Comparator.comparing(Emp::getDept))
+			.collect(Collectors.groupingBy(Emp::getDept, LinkedHashMap::new,
+				Collectors.maxBy(Comparator.comparing(Emp::getScore))));
 		System.out.println("부서별 최고점수 1명");
 		System.out.println("maxScoreByDept = " + maxScoreByDept);
 

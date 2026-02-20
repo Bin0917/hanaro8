@@ -1,4 +1,4 @@
-package org.hana8.trythis;
+package org.hana8.Annotations;
 
 public @interface MyAnnotation {
 	String value() default "";
