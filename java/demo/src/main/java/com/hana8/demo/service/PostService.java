@@ -1,17 +1,21 @@
 package com.hana8.demo.service;
 
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.hana8.demo.dto.PostListDTO;
 import com.hana8.demo.entity.Post;
+import com.hana8.demo.entity.QPost;
 import com.hana8.demo.mapper.PostMapper;
 import com.hana8.demo.post.PostDTO;
 import com.hana8.demo.repository.PostRepository;
+import com.querydsl.core.BooleanBuilder;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +29,30 @@ public class PostService {
 		Pageable pager = PageRequest.of(dto.getPage(), dto.getPageSize(), Sort.by("id").descending());
 		List<Post> posts = repository.findAll(pager).getContent();
 		return posts.stream().map(mapper::toPostDTO).toList();
+	}
+
+	public List<PostDTO> searchPostsByTitle(PostDTO dto) {
+		QPost post = QPost.post;
+		BooleanBuilder bb = new BooleanBuilder();
+
+		if (StringUtils.hasText(dto.getTitle())) {
+			bb.and(post.title.stringValue().contains(dto.getTitle()));
+		}
+		return StreamSupport.stream(repository.findAll(bb).spliterator(), false).map(mapper::toPostDTO).toList();
+	}
+
+	public List<PostDTO> searchPostByTitleAndContent(PostDTO dto) {
+		QPost post = QPost.post;
+		BooleanBuilder bb = new BooleanBuilder();
+
+		if (StringUtils.hasText(dto.getTitle())) {
+			bb.and(post.title.stringValue().contains(dto.getTitle()));
+		}
+		if (StringUtils.hasText(dto.getContent())) {
+			bb.and(post.body.stringValue().contains(dto.getContent()));
+		}
+
+		return StreamSupport.stream(repository.findAll(bb).spliterator(), false).map(mapper::toPostDTO).toList();
 	}
 
 	public PostDTO getPost(Long id) {

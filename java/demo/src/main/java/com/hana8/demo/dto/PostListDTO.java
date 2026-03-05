@@ -9,6 +9,7 @@ public class PostListDTO {
 	@Size(min = 1, max = 100)
 	private Integer pageSize;
 
+	// param 입력값이 없을 경우를 위한 default 설정
 	public PostListDTO() {
 		this.page = 1;
 		this.pageSize = 10;
