@@ -1,0 +1,38 @@
+import { use } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { loginGithub, loginGoogle } from '@/lib/sign.action';
+import { GithubLoginButton } from './GithubLoginButton';
+import { GoogleLoginButton } from './GoogleLoginButton';
+import SignForm from './SignForm';
+
+// type Provider = 'google' | 'github';
+
+export default function SignPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ callbackUrl?: string }>;
+}) {
+  // const login = async (provider: Provider) => {
+  //   'use server';
+  //   await signIn(provider, { redirectTo: '/hello' });
+  // };
+  const { callbackUrl } = use(searchParams);
+  return (
+    <>
+      <h1 className="text-xl">signIn</h1>
+      <form className="flex gap-3">
+        <input
+          type="hidden"
+          name="redirectTo"
+          value={callbackUrl || '/hello'}
+        />
+        <GoogleLoginButton formAction={loginGoogle} />
+        <GithubLoginButton formAction={loginGithub} />
+      </form>
+
+      <Separator className="my-3" />
+
+      <SignForm />
+    </>
+  );
+}

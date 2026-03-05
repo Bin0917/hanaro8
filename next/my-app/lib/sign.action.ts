@@ -1,0 +1,141 @@
+'use server'; // 이 파일의 모든 함수는 서버에서만 실행됨을 선언!
+
+import { redirect } from 'next/navigation';
+import { AuthError } from 'next-auth';
+import z, { email, treeifyError } from 'zod';
+import { signIn, signOut } from './auth';
+import { isErrorWithMessage } from './errors';
+import { prisma } from './prisma';
+
+// 1. 사용할 로그인 방식(제공자) 타입 정의
+type Provider = 'google' | 'github' | 'credentials';
+
+// 2. [로그아웃] 세션을 파괴하고 로그인 페이지로 리다이렉트
+export const logout = async () => {
+  await signOut({ redirectTo: '/sign' });
+};
+
+/**
+ * 3. [공통 로그인 함수] 구글/깃허브 등 OAuth 로그인 시 사용
+ */
+export const login = async (provider: Provider, formdata: FormData) => {
+  const redirectTo = formdata.get('redirectTo') as string;
+  await signIn(provider, { redirectTo });
+};
+
+// 소셜 로그인들은 공통 login 함수를 재사용 (가독성 UP!)
+export const loginGoogle = async (formdata: FormData) => {
+  await login('google', formdata);
+};
+export const loginGithub = async (formdata: FormData) => {
+  await login('github', formdata);
+};
+
+/**
+ * 4. [에러/데이터 응답 타입]
+ * 성공하면 [undefined, data], 실패하면 [error객체]를 반환하는 튜플 구조
+ */
+export type ValidError = {
+  error: Record<string, string | undefined>;
+  data: Record<string, string | undefined>; // 사용자가 입력했던 값을 다시 돌려줌 (Input 유지용)
+};
+
+const validate = <T extends z.ZodObject>(zobj: T, formdata: FormData) => {
+  const data = Object.fromEntries(formdata.entries()) as ValidError['data'];
+
+  const validator = zobj.safeParse(formdata);
+  if (!validator.success) {
+    const verr = treeifyError(validator.error).properties || {};
+    const validError: ValidError = { error: {}, data };
+    for (const [k, v] of Object.entries(verr)) {
+      validError.error[k] = v?.errors[0];
+    }
+    return [validError] as const;
+  }
+  return [undefined, validator.data] as const;
+};
+
+/**
+ * 5. [이메일 로그인 서버 액션] ⭐ 핵심 로직! (서버액션)
+ */
+export const loginEmail = async (formdata: FormData) => {
+  // 브라우저에서 보낸 FormData에서 값 추출
+  // const email = formdata.get('email') as string;
+  // const password = formdata.get('password') as string;
+  // const data = { email, password };
+
+  const zobj = z.object({
+    email: z.email('Invalid Email Address'),
+    password: z.string().min(3, 'enter more characters than 3'),
+  });
+  const [err, data] = validate(zobj, formdata);
+  if (err) {
+    return [err];
+  }
+  data;
+
+  try {
+    // [인증 시도] Auth.js의 signIn 실행
+    // redirect: false를 주면 페이지 이동을 막고 여기서 결과를 기다림
+    const ret = await signIn('credentials', { redirect: false, ...data });
+    console.log('🚀 ~ loginEmail ~ ret:', ret);
+
+    return [undefined, data]; // 성공 시 에러는 없고 데이터만 반환
+  } catch (err) {
+    // [에러 처리] 인증 과정에서 문제가 생겼을 때
+    if (err instanceof AuthError) {
+      // Auth.js가 던진 에러 메시지 중 불필요한 'Read more...' 링크 문자열 제거 로직
+      const msg = err.message || 'EmailSignInError';
+      const cleanMsg = msg.includes('Read more')
+        ? msg.substring(0, msg.indexOf('Read more'))
+        : msg;
+
+      // 우리가 auth.ts의 signIn 콜백에서 던진 커스텀 에러 타입 확인
+      if (err.type === 'EmailSignInError') {
+        return [{ error: { email: cleanMsg }, data }];
+      }
+    }
+
+    // 예상치 못한 에러가 났을 때의 방어 코드
+    console.log('🚀 인증 에러 발생:', err);
+    return [{ error: { email: '로그인 정보가 일치하지 않습니다.' }, data }];
+  }
+};
+
+export const regist = async (_: ValidError | undefined, formData: FormData) => {
+  try {
+    const zobj = z
+      .object({
+        name: z.string().min(1).max(30),
+        email: z.email(),
+        password: z.string().min(3),
+        password2: z.string().min(3),
+      })
+      .refine(
+        ({ password, password2 }) => password === password2,
+        'Not equals pw, pw2',
+      );
+
+    const [err, data] = validate(zobj, formData);
+    if (err) return [err];
+
+    const { email } = data;
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (user)
+      return [
+        { error: { email: 'this email is already exist' }, data },
+      ] satisfies [ValidError];
+
+    await prisma.user.create({
+      data,
+      select: { id: true, name: true, email: true, isadmin: true },
+    });
+
+    redirect('/sign');
+  } catch (err) {
+    return [{error: {email: isErrorWithMessage(err) ? JSON.stringify(err)},data}]
+  }
+};
