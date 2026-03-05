@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: demo
+  web:
+    resources:
+      add-mappings: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/testdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: TestdbRoot
+
+  jpa:
+    #    show-sql: true
+    defer-datasource-initialization: false
+
+    hibernate:
+      ddl-auto: create # 실행시, 테이블을 만들지, 만들고 끌때 내릴지 등을 설정한다.
+      naming:
+        physical-strategy: # field명 그대로 column명 (default: SpringPhysicalNamingStrategy (userId ⇒ user_id))
+          org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 10
+          time_zone: Asia/Seoul
+        order_inserts: true # 같은 테이블끼리 묶어서 batch 전송
+        order_updates: true # batch 효율을 위해 order_inserts/order_updates 같이 써야 효과적!
+        format_sql: true # 쿼리문 줄바꿈과 들여쓰기 출력 여부 (show-sql일 경우 true) 이걸 쿼리가 콘솔에 보
+        use_sql_comments: true # 쿼리문이 어떤 클래스에서 실행됐는지 출력 여부 (개발환경에서만 true)
+
+  sql:
+    init:
+      mode: never # never, embedded(H2 DB 쓸 때 사용) 등 있음
+
+# 저장할때마다 오토리로드
+#  devtools:
+#    livereload:
+#      enabled: true
+#    restart:
+#      enabled: true
+#      additional-paths: src/main/java

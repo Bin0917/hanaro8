@@ -1,0 +1,35 @@
+@baseUrl=http://localhost:8080
+
+
+### user-list
+GET {{baseUrl}}/users
+
+### user-info
+GET {{baseUrl}}/users/1
+
+### user-regist
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "xxx",
+  "email": "hong@mail.com",
+  "coMail": "hong@hanabank.com",
+  "tel": "010-123-5678",
+  "creditCard": "1234 1234 5678 5678"
+}
+
+
+### user-update
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "username": "Hong",
+  "email": "hong@gmail.com",
+  "tel": "010-1234-5678"
+}
+
+### user-withdraw
+DELETE {{baseUrl}}//users/1

@@ -30,6 +30,9 @@ public class Vote {
 		for (String area : areas) {
 			Thread t = new Thread(myRun, area);
 			t.start();
+			// Thread.ofPlatform().start(myRun);
+			// Thread t = Thread.ofVirtual().start(myRun);// 데몬이라 얘는 안보임. 돌모간 있음
+			// t.join();
 		}
 
 	}

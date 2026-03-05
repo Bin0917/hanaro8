@@ -1,0 +1,42 @@
+@baseUrl=http://localhost:8080/posts
+#@baseUrl=http://localhost:8080/posts/list
+
+### posts list
+GET {{baseUrl}}/
+
+### posts-regist
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "title": " ",
+  "body": "body 1",
+  "writer": "1"
+}
+
+### posts-regist
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "title": "title - kim",
+  "body": "body - kim",
+  "writer": "Kim"
+}
+
+### posts-info
+GET {{baseUrl}}/1
+
+
+### posts-update
+PUT {{baseUrl}}/1
+Content-Type: application/json
+
+{
+  "title": "title 1xxx",
+  "body": "body 1xxx",
+  "writer": "Hongxxx"
+}
+
+### posts-remove
+DELETE {{baseUrl}}/1
