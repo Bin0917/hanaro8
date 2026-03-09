@@ -1,6 +1,7 @@
 package com.hana8.demo.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hana8.demo.common.enums.BloodType;
@@ -38,6 +39,11 @@ public class MemberDTO {
 	private LocalDateTime createdAt;
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
 	private LocalDateTime updatedAt;
+
+	private List<PostDTO> posts;
+	private Long replyCount;
+	private List<DeptDTO> captainDepts;
+	private List<DeptDTO> memberDepts;
 
 	public interface OnUpdate {
 	}

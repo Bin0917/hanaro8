@@ -1,31 +1,51 @@
 package com.hana8.demo.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@ToString(callSuper = true)
 public class PostDTO {
-	@NotNull(groups = OnUpdate.class, message = "수정할 게시글 id를 입력하십쇼!!")
-	// validated(PostDTO.Onupdate.class) 이렇게 불린 경우 만!! 검사 나머진 검사안함
+	@NotNull(groups = MemberDTO.OnUpdate.class, message = "수정할 멤버의 id를 입력하세요!")
 	private Long id;
 
-	@NotBlank(message = "제목은 필수값입니다.")
+	@NotBlank
 	private String title;
 
-	private String content;
-
 	@NotBlank
-	private String writer;
+	private MemberDTO writer;
 
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	public interface OnUpdate {
-	}
+	@JsonManagedReference
+	private PostBodyDTO body;
+
+	@JsonManagedReference
+	@Builder.Default
+	private List<ReplyDTO> replies = new ArrayList<>();
+
+	@JsonManagedReference
+	@Builder.Default
+	private List<HashtagDTO> hashtags = new ArrayList<>();
 
 	public interface OnCreate {
+	}
+
+	public interface OnUpdate {
 	}
 }

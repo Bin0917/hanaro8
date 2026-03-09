@@ -16,6 +16,9 @@ import jakarta.transaction.Transactional;
 public interface PostRepository extends JpaRepository<Post, Long>, QuerydslPredicateExecutor<Post> {
 	List<Post> findByTitleStartingWith(String title);
 
+	//컬럼명과 함께 써주면 Query 안써도됨
+	List<Post> findByWriterId(Long writerId);
+
 	@Query("delete from Post where id = :id")
 	@Transactional
 	@Modifying

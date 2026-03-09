@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import com.hana8.demo.entity.Post;
+import com.hana8.demo.entity.PostBody;
 
 class PostRepositoryTest extends BaseRepositoryTest {
 	private static long id;
@@ -29,15 +30,21 @@ class PostRepositoryTest extends BaseRepositoryTest {
 			orgCnt = repository.count();
 	}
 
-	// @Test
+	@Test
 	void createAllTest() {
 		long cnt = repository.count();
 		List<Post> posts = LongStream.rangeClosed(4, 100)
-			.mapToObj(l -> Post.builder()
-				.title("Title" + l)
-				.body("body of " + l)
-				.writer("writer" + l)
-				.build()
+			.mapToObj(l -> {
+					PostBody postBody = new PostBody("body of " + l);
+
+					Post post = Post.builder()
+						.title("Title" + l)
+						.body(new PostBody("Body of " + l))
+						.writer("writer" + l)
+						.build();
+					postBody.setPost(post);
+					return postBody;
+				}
 			).toList();
 
 		repository.saveAll(posts);

@@ -1,5 +1,7 @@
 package com.hana8.demo.entity;
 
+import java.util.List;
+
 import org.hibernate.annotations.ColumnDefault;
 
 import com.hana8.demo.common.enums.BloodType;
@@ -11,6 +13,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
@@ -51,4 +55,11 @@ public class Member extends BaseEntity {
 	// 디폴트값 주기?
 	@ColumnDefault("false")
 	private Boolean isActive;
+
+	// owner에서 fk로 연결된 필드를 적어야해
+	@OneToMany(mappedBy = "captain")
+	private List<Dept> captainDepts;
+
+	@ManyToMany(mappedBy = "deptMembers")
+	private List<Dept> memberDepts;
 }

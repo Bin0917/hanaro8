@@ -37,7 +37,7 @@ public class SpringConfig {
 	}
 
 	@Bean
-	public PostsService postService() {
+	public PostsService postsService() {
 		return new PostServiceImpl(postsRepository(), postsListRepository());
 	}
 }

@@ -12,8 +12,13 @@ import com.hana8.demo.dto.MemberDTO;
 import com.hana8.demo.dto.MemberSearchDTO;
 import com.hana8.demo.entity.Member;
 import com.hana8.demo.entity.QMember;
+import com.hana8.demo.mapper.DeptMapper;
 import com.hana8.demo.mapper.MemberMapper;
+import com.hana8.demo.mapper.PostMapper;
+import com.hana8.demo.repository.DeptRepository;
 import com.hana8.demo.repository.MemberRepository;
+import com.hana8.demo.repository.PostRepository;
+import com.hana8.demo.repository.ReplyRepository;
 import com.querydsl.core.BooleanBuilder;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +27,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 	private final MemberRepository memberRepository;
+	private final PostRepository postRepository;
+	private final ReplyRepository replyRepository;
 	private final MemberMapper mapper;
+	private final PostMapper postMapper;
+	private final DeptRepository deptRepository;
+	private final DeptMapper deptMapper;
 
 	public List<MemberDTO> searchMembers(MemberSearchDTO dto) {
 		System.out.println("dto = " + dto);
@@ -62,7 +72,13 @@ public class MemberService {
 	public MemberDTO getMember(Long id) {
 		Member member = memberRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Member #%d is not found".formatted(id)));
-		return mapper.toDTO(member);
+
+		MemberDTO dto = mapper.toDTO(member);
+		dto.setPosts(postRepository.findByWriterId(id).stream().map(postMapper::toPostDTO).toList());
+		dto.setReplyCount(replyRepository.countByReplierId(id));
+		dto.setCaptainDepts(member.getCaptainDepts().stream().map(deptMapper::toDTO).toList());
+		dto.setMemberDepts(member.getMemberDepts().stream().map(deptMapper::toDTO).toList());
+		return dto;
 	}
 
 	public MemberDTO registMember(MemberDTO memberDTO) {
