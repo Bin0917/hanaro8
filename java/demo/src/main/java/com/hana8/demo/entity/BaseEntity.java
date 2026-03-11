@@ -22,6 +22,9 @@ public class BaseEntity {
 
 	@Override
 	public String toString() {
-		return "%s - %s".formatted(createdAt, updatedAt);
+		return "%s - %s".formatted(
+			createdAt != null ? createdAt : "N/A",
+			updatedAt != null ? updatedAt : "N/A"
+		);
 	}
 }

@@ -4,17 +4,23 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hana8.demo.common.enums.BloodType;
 import com.hana8.demo.entity.Member;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MemberRepositoryTest extends BaseRepositoryTest {
 	private static long id;
-	private static long orgCount = 0;
+	private static long orgCount = -1;
 
 	private final Member newMember = Member.builder()
 		.email("tester1@gmail.com")
@@ -26,10 +32,14 @@ class MemberRepositoryTest extends BaseRepositoryTest {
 	@Autowired
 	private MemberRepository repository;
 
+	@BeforeAll
+	void setupAll() {
+		orgCount = repository.count();
+	}
+
 	@BeforeEach
 	void setOrgCount() {
-		if (orgCount == 0)
-			orgCount = repository.count();
+		// BeforeAll에서 이미 설정함
 	}
 
 	@Test

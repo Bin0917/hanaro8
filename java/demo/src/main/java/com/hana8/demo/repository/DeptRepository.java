@@ -3,14 +3,27 @@ package com.hana8.demo.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.hana8.demo.entity.Dept;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.transaction.Transactional;
 
-// 기본적으로 다 JpaRepo 를 쓴다
-// jpa를 상속해서 얘는 Bean 임
-public interface DeptRepository extends JpaRepository<Dept, Long> {
+public interface DeptRepository extends JpaRepository<Dept, Integer> {
+	List<Dept> findByCaptainId(@Param("id") Long memberId);
 
-	List<Dept> findByCaptainName(@NotBlank String captainName);
+	// 쿼리 연습도 필요
+	@Query("select d from Dept d inner join d.deptMembers m where m.id = :id")
+	List<Dept> findByMemberId(@Param("id") Long deptId);
+
+	// queryDsl ....
+	@Query("select d.id, d.name, count(m) as memberCnt from Dept d inner join d.deptMembers m where m.id = :id group by d.id, d.name")
+	List<Object[]> findByDeptMemberCountId();
+
+	@Query("delete from Dept where id = :id")
+	@Transactional
+	@Modifying
+	int deleteByDeptId(@Param("id") Integer id);
 }

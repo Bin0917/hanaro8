@@ -11,6 +11,7 @@ import com.hana8.demo.entity.PostBody;
 @Mapper(componentModel = "spring", uses = {MemberMapper.class, ReplyMapper.class})
 public interface PostMapper {
 	@Mapping(target = "replies", ignore = true)
+	@Mapping(target = "body", ignore = true)
 	PostDTO toPostDTO(Post post);
 
 	@Mapping(target = "body", ignore = true)

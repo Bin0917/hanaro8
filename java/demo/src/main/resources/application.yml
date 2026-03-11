@@ -2,6 +2,12 @@ spring:
   application:
     name: demo
 
+  servlet:
+    multipart:
+      location: src/main/resources/static/tmp # tmp 폴더 미리 만들어야함
+      max-request-size: 10MB
+      max-file-size: 900KB
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3308/testdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -37,6 +43,12 @@ spring:
   web:
     resources:
       add-mappings: false
+# file upload간 upload 경로 설정
+upload:
+  path: src/main/resources/static/upload
+  secure: src/main/upload/secure
+
+
 # 저장할때마다 오토리로드
 #  devtools:
 #    livereload:
@@ -44,3 +56,11 @@ spring:
 #    restart:
 #      enabled: true
 #      additional-paths: src/main/java
+
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger.html
+  api-docs:
+    enabled: true
+    path: /hana8/api-docs

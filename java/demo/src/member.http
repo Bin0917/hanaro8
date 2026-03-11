@@ -13,10 +13,17 @@ GET {{baseUrl}}/search?isActive=0
 GET {{baseUrl}}/search?isActive=1&bloodType=B
 
 ### member list
-GET {{baseUrl}}/search?nickname=hong
+GET {{baseUrl}}/search?nickname=kim
 
 ### member list
-GET {{baseUrl}}/search?datetime=2026-03-05 09:16:25
+GET {{baseUrl}}/search?datetime=2026-03-05 15:16:25
+
+### member list
+GET {{baseUrl}}/search?datetime=2026-03-05
+
+### member list
+GET {{baseUrl}}/search?datetime=2026-03-05 09:16
+
 
 
 
@@ -34,7 +41,7 @@ Content-Type: application/json
 }
 
 ### member-info
-GET {{baseUrl}}/5
+GET {{baseUrl}}/1
 
 
 ### post-update
@@ -52,3 +59,48 @@ Content-Type: application/json
 
 ### withdraw member
 DELETE {{baseUrl}}/5
+
+### 파일 업로드 http
+POST {{baseUrl}}/files/upload/1
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpg
+
+< C:/Users/campus2H060/Desktop/test.jpg
+--boundary--
+
+### 파일 업로드 http/secure
+POST {{baseUrl}}/files/secure/upload/1
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpg
+
+< C:/Users/campus2H060/Desktop/test.jpg
+--boundary--
+
+### 다중 파일 업로드
+POST {{baseUrl}}/files/upload/multiple/1
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="files"; filename="test1.jpeg"
+Content-Type: image/jpeg
+
+< C:/Users/campus2H060/Desktop/test1.jpeg
+--boundary
+Content-Disposition: form-data; name="files"; filename="test2.png"
+Content-Type: image/png
+
+< C:/Users/campus2H060/Desktop/test2.png
+--boundary--
+
+### 파일 다운로드
+GET {{baseUrl}}/files/download/3b6be53d-4c56-4b3e-bc9c-6d626ef76644.jpg
+
+
+### 파일 다운로드(secure)
+GET {{baseUrl}}/files/download/9c3b4c3e-bebe-4a73-bb3a-142f26aba158.jpg

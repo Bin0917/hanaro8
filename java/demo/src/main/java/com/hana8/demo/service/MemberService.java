@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.hana8.demo.dto.MemberDTO;
+import com.hana8.demo.dto.MemberImageDTO;
 import com.hana8.demo.dto.MemberSearchDTO;
 import com.hana8.demo.entity.Member;
 import com.hana8.demo.entity.QMember;
 import com.hana8.demo.mapper.DeptMapper;
+import com.hana8.demo.mapper.MemberImageMapper;
 import com.hana8.demo.mapper.MemberMapper;
 import com.hana8.demo.mapper.PostMapper;
 import com.hana8.demo.repository.DeptRepository;
+import com.hana8.demo.repository.MemberImageRepository;
 import com.hana8.demo.repository.MemberRepository;
 import com.hana8.demo.repository.PostRepository;
 import com.hana8.demo.repository.ReplyRepository;
@@ -33,6 +36,8 @@ public class MemberService {
 	private final PostMapper postMapper;
 	private final DeptRepository deptRepository;
 	private final DeptMapper deptMapper;
+	private final MemberImageRepository memberImageRepository;
+	private final MemberImageMapper memberImageMapper;
 
 	public List<MemberDTO> searchMembers(MemberSearchDTO dto) {
 		System.out.println("dto = " + dto);
@@ -74,10 +79,15 @@ public class MemberService {
 			.orElseThrow(() -> new IllegalArgumentException("Member #%d is not found".formatted(id)));
 
 		MemberDTO dto = mapper.toDTO(member);
+
+		List<MemberImageDTO> memberImageDTOList = memberImageMapper.toDTOList(memberImageRepository.findByMemberId(id));
+
 		dto.setPosts(postRepository.findByWriterId(id).stream().map(postMapper::toPostDTO).toList());
 		dto.setReplyCount(replyRepository.countByReplierId(id));
-		dto.setCaptainDepts(member.getCaptainDepts().stream().map(deptMapper::toDTO).toList());
-		dto.setMemberDepts(member.getMemberDepts().stream().map(deptMapper::toDTO).toList());
+
+		dto.setCaptainDepts(deptMapper.toDTOList(deptRepository.findByCaptainId(id)));
+		dto.setMemberDepts(deptMapper.toDTOList(deptRepository.findByMemberId(id)));
+		dto.setMemberImages(memberImageDTOList);
 		return dto;
 	}
 

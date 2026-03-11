@@ -1,6 +1,7 @@
 package com.hana8.demo.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -42,8 +43,12 @@ public class MemberDTO {
 
 	private List<PostDTO> posts;
 	private Long replyCount;
-	private List<DeptDTO> captainDepts;
-	private List<DeptDTO> memberDepts;
+	@Builder.Default
+	private List<DeptDTO> captainDepts = new ArrayList<>();
+	@Builder.Default
+	private List<DeptDTO> memberDepts = new ArrayList<>();
+	@Builder.Default
+	private List<MemberImageDTO> memberImages = new ArrayList<>();
 
 	public interface OnUpdate {
 	}

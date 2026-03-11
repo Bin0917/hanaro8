@@ -1,5 +1,6 @@
 package com.hana8.demo.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -19,13 +20,15 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -58,8 +61,21 @@ public class Member extends BaseEntity {
 
 	// owner에서 fk로 연결된 필드를 적어야해
 	@OneToMany(mappedBy = "captain")
-	private List<Dept> captainDepts;
+	@Builder.Default
+	@ToString.Exclude
+	private List<Dept> captainDepts = new ArrayList<Dept>();
 
 	@ManyToMany(mappedBy = "deptMembers")
-	private List<Dept> memberDepts;
+	@Builder.Default
+	@ToString.Exclude
+	private List<Dept> memberDepts = new ArrayList<>();
+
+	@OneToMany(mappedBy = "member")
+	@Builder.Default
+	@ToString.Exclude
+	private List<MemberImage> memberImages = new ArrayList<>();
+
+	public Member(Long id) {
+		this.id = id;
+	}
 }

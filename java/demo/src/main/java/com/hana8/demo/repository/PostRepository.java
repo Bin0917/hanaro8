@@ -12,15 +12,21 @@ import com.hana8.demo.entity.Post;
 
 import jakarta.transaction.Transactional;
 
-// public interface PostRepository extends JpaRepository<Post, String> {
 public interface PostRepository extends JpaRepository<Post, Long>, QuerydslPredicateExecutor<Post> {
 	List<Post> findByTitleStartingWith(String title);
 
-	//컬럼명과 함께 써주면 Query 안써도됨
+	List<Post> findByIdBetween(long l, long l1);
+
 	List<Post> findByWriterId(Long writerId);
 
+	@Query("select p from Post p where p.id between :start and :end order by p.id desc")
+	List<Post> findByAny(@Param("start") int s, @Param("end") int e);
+
+	@Query("select p.createdAt, p.title from Post p where p.id between :start and :end order by p.createdAt desc, p.title")
+	List<Object[]> sortByCreatedAtAndTitle(@Param("start") int s, @Param("end") int e);
+
 	@Query("delete from Post where id = :id")
-	@Transactional
 	@Modifying
+	@Transactional
 	int deletePost(@Param("id") Long id);
 }

@@ -21,25 +21,21 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
+@ToString(of = {"id", "title"}) // 💡 깔끔하게 id와 제목만!
+@EqualsAndHashCode(of = "id", callSuper = false) // 💡 id로만 비교하면 절대 안 꼬여요!
 public class Post extends BaseEntity {
-	// @Id
-	// @GeneratedValue(strategy = GenerationType.UUID)
-	// @UuidGenerator
-	// private String id;
-
-	// @Tsid //
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(columnDefinition = "int unsigned")
@@ -47,20 +43,16 @@ public class Post extends BaseEntity {
 
 	private String title;
 
-	// @OneToOne(mappedBy = "post", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-	// owner의 post 필드랑 맵핑된다!
-	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL) //one to one 은 all로 하고 나머지 상태일때 위 처럼 걸어라
+	@OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
 	private PostBody body;
 
-	// @Column(length = 31, nullable = false)
-	// private String writer;
-
-	@ManyToOne(fetch = FetchType.EAGER) // 무조건 만들겠다? 목록에서 필요할때는 사용!
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "writer", nullable = false, foreignKey = @ForeignKey(name = "fk_Post_Member"))
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Member writer;
 
 	@ManyToMany
+	@Builder.Default
 	private List<Hashtag> hashtags = new ArrayList<>();
 
 	@OneToMany(mappedBy = "post")
@@ -71,9 +63,9 @@ public class Post extends BaseEntity {
 		this.title = title;
 		this.writer = writer;
 		this.body = new PostBody("body of " + title);
+		this.body.setPost(this);
 	}
 
-	// 편의 메서드
 	public void setBody(PostBody body) {
 		this.body = body;
 		if (body != null)

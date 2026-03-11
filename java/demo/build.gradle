@@ -1,5 +1,7 @@
 plugins {
     id 'java'
+    id 'jacoco'
+
     id 'org.springframework.boot' version '4.0.3'
     id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -22,6 +24,9 @@ configurations {
 
 repositories {
     mavenCentral()
+}
+jacoco {
+    toolVersion = "0.8.14"
 }
 
 dependencies {
@@ -49,16 +54,45 @@ dependencies {
     //MapStruct
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
-    // TEst
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+    // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-json'
+    testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
     testImplementation 'org.springframework.boot:spring-boot-data-jpa-test' // springboot 4.x 부터 jpa test가 분리되었음.
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    //thumnail
+    implementation 'net.coobird:thumbnailator:0.4.21'
 }
 
 // build.gradle
 tasks.named('test') {
     useJUnitPlatform()
     jvmArgs '-XX:+EnableDynamicAgentLoading'
+    finalizedBy jacocoTestReport
 }
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+}
+check.dependsOn jacocoTestReport
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+    }
+}
+
 
